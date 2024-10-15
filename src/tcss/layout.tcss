@@ -1,0 +1,23 @@
+#project_container {
+    layout: grid;
+    grid-size: 2 1;
+}
+
+#project_summary {
+    layout: grid;
+    grid-size: 2 1;
+   border-title-color: $accent;
+   border: $primary-background round;
+   content-align: center middle;
+    Label {
+      width: 100%;
+      padding: 0 1;
+    }
+}
+
+ComposerRequireTable {
+   # padding: 1 1;
+   border-title-color: $accent;
+   border: $primary-background round;
+   content-align: center middle;
+}
