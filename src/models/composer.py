@@ -20,3 +20,9 @@ class Composer(BaseModel):
             # require = {package:Package(name=package, version=version) for package, version in data.pop("require", []).items()}
             # require_dev = {package:Package(name=package, version=version) for package, version in data.pop("require-dev", []).items()}
             return cls(require_dev=require_dev, require=require, **data)
+
+    @property
+    def manual_scripts(self) -> list[str]:
+        exclude = ("auto-scripts", "post-install-cmd", "post-update-cmd")
+        return list(filter(lambda x: x not in exclude, list(self.scripts.keys())))
+        # return list(self.scripts.keys())
