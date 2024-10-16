@@ -4,6 +4,7 @@ from textual.app import App, ComposeResult
 from textual.containers import VerticalScroll, Container
 from textual.widgets import Header, Footer, Button, DataTable, Label
 
+from composer_utils import composer_updatable
 from models import Project
 from .composer import ComposerRequireTable, ComposerScripts, ComposerScriptButton
 from .terminal import TerminalModal
@@ -41,7 +42,11 @@ class MainApp(App):
 
     async def on_mount(self) -> None:
         table = self.query_one(ComposerRequireTable)
-        table.set_requirements(self._project.composer_json.required_packages, self._project.composer_json.locked_packages)
+        packages_updatable = composer_updatable(self._project)
+        table.set_requirements(
+            self._project.composer_json.required_packages,
+            self._project.composer_json.locked_packages,
+            packages_updatable)
         scripts = self.query_one(ComposerScripts)
         for script in self._project.composer_json.manual_scripts:
             self.log(f"Bouton {script}")

@@ -1,5 +1,7 @@
 import typer
 from pydantic_core._pydantic_core import ValidationError
+
+from composer_utils import composer_updatable
 from models import Project
 from presentation import MainApp
 from settings import settings
@@ -31,6 +33,7 @@ def debug(project_path: str) -> None:
         exit(1)
 
     print(project.composer_json)
+    composer_updatable(project)
 
 
 def main() -> None:

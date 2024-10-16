@@ -39,8 +39,10 @@ class TerminalModal(ModalScreen):
                 text=True
         ) as process:
             output = process.stdout.read().strip()
-            self.log(f"Sortie: {output}")
             terminal.write(output)
+            # stderr = process.stderr.read().strip()
+            # if stderr:
+            #     terminal.write(f"[italic red]{stderr}[/italic red]")
         terminal.write("[italic red]Completed![/italic red]")
 
     @on(Button.Pressed, "#terminal_modal_close")
