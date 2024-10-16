@@ -33,5 +33,5 @@ class Project(BaseModel):
     def composer_json(self) -> Optional[Composer]:
         if not self.composer:
             return
-        return Composer.from_json(os.path.join(self.path, 'composer.json'))
+        return Composer.from_json(self.path)
 

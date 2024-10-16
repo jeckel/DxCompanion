@@ -41,7 +41,7 @@ class MainApp(App):
 
     async def on_mount(self) -> None:
         table = self.query_one(ComposerRequireTable)
-        table.set_requirements(self._project.composer_json.require)
+        table.set_requirements(self._project.composer_json.required_packages, self._project.composer_json.locked_packages)
         scripts = self.query_one(ComposerScripts)
         for script in self._project.composer_json.manual_scripts:
             self.log(f"Bouton {script}")

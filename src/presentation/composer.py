@@ -7,14 +7,17 @@ class ComposerRequireTable(DataTable):
     def __init__(self, title: str, **kwargs):
         super().__init__(**kwargs)
         self.border_title = title
-        self.add_columns(*('Package', 'Version'))
+        self.cursor_type = 'row'
+        self.add_columns(*('Package', 'Required', 'Locked'))
 
-    def set_requirements(self, requirements: dict[str, str]) -> None:
-        for package, version in requirements.items():
-            styled_row = (
+    def set_requirements(self, required_packages: dict[str, str], locked_packages: dict[str, str]) -> None:
+        for package, version in required_packages.items():
+            styled_row = [
                 Text(str(package), justify="left"),
                 Text(str(version), style="italic #03AC13", justify="right")
-            )
+            ]
+            if package in locked_packages:
+                styled_row.append(Text(str(locked_packages[package]), style="italic #FF0000", justify="right"))
             self.add_row(*styled_row)
 
 class ComposerScriptButton(Button):
@@ -24,7 +27,5 @@ class ComposerScriptButton(Button):
         self.script_name = script_name
 
 class ComposerScripts(Horizontal):
-    BORDER_TITLE = "Composer Scripts"
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
