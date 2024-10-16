@@ -5,7 +5,7 @@ from textual.containers import VerticalScroll, Container
 from textual.widgets import Header, Footer, Button, DataTable, Label
 
 from models import Project
-from .composer import ComposerRequireTable
+from .composer import ComposerRequireTable, ComposerScripts
 
 
 class MainApp(App):
@@ -32,6 +32,7 @@ class MainApp(App):
             with Container(id="project_summary"):
                 yield Label(Text(str("Project :"), style="italic #03AC13", justify="right"))
                 yield Label(Text(str(self._project.name), style="italic"))
+                yield ComposerScripts(id="composer_scripts")
             yield ComposerRequireTable(title="Composer requirements", id="composer_table")
 
         yield Footer()

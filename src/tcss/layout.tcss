@@ -5,7 +5,7 @@
 
 #project_summary {
     layout: grid;
-    grid-size: 2 1;
+    grid-size: 2 2;
    border-title-color: $accent;
    border: $primary-background round;
    content-align: center middle;
