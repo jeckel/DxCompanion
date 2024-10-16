@@ -6,12 +6,12 @@
 #project_summary {
     layout: grid;
     grid-size: 2 2;
-   border-title-color: $accent;
-   border: $primary-background round;
-   content-align: center middle;
+    grid-gutter: 1;
+    border-title-color: $accent;
+    border: $primary-background round;
+    content-align: center middle;
     Label {
       width: 100%;
-      padding: 0 1;
     }
 }
 
@@ -20,4 +20,25 @@ ComposerRequireTable {
    border-title-color: $accent;
    border: $primary-background round;
    content-align: center middle;
+}
+
+ComposerScripts {
+   border-title-color: $accent;
+   border: $primary-background round;
+   content-align: center middle;
+}
+
+ComposerScriptModal {
+  align: center middle;
+}
+
+ComposerScriptModal > Container {
+  padding: 1 2;
+  background: $panel;
+  width: 100;
+  height: 50;
+}
+
+ComposerScriptModal > Container > Button {
+  margin: 1 0;
 }
