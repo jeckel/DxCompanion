@@ -4,10 +4,10 @@ from rich import print
 
 from models import Project
 
-def composer_updatable(project: Project) -> dict[str, str]:
+def composer_updatable(path: str) -> dict[str, str]:
     with subprocess.Popen(
             ['composer', 'update', '--dry-run'],
-            cwd=project.path,
+            cwd=path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True

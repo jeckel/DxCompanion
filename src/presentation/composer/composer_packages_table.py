@@ -1,9 +1,15 @@
-from textual.containers import Container, VerticalScroll, Horizontal
 from rich.text import Text
-from textual.widgets import DataTable, Button, Label, RichLog
+from textual.widgets import DataTable
 
 
-class ComposerRequireTable(DataTable):
+class ComposerPackagesTable(DataTable):
+    """
+    DataTable for listing packages for a project with
+    - package name
+    - package required version (as defined in composer.json)
+    - package installed (as defined in composer.lock)
+    - package update (newer version than the installed one, and still matching the requirements)
+    """
     def __init__(self, title: str, **kwargs):
         super().__init__(**kwargs)
         self.border_title = title
@@ -25,13 +31,3 @@ class ComposerRequireTable(DataTable):
             else:
                 styled_row.append("")
             self.add_row(*styled_row)
-
-class ComposerScriptButton(Button):
-    def __init__(self, script_name: str, **kwargs):
-        self.script_name = script_name
-        super().__init__(script_name, id=f"composer-button-{script_name}", **kwargs)
-        self.script_name = script_name
-
-class ComposerScripts(Horizontal):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
