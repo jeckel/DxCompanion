@@ -1,9 +1,5 @@
 import subprocess
 
-from rich import print
-
-from models import Project
-
 
 def composer_updatable(path: str) -> dict[str, str]:
     with subprocess.Popen(
@@ -13,11 +9,7 @@ def composer_updatable(path: str) -> dict[str, str]:
         stderr=subprocess.PIPE,
         text=True,
     ) as process:
-        # output = process.stdout.read().strip()
-        # print(f'Sortie {output}')
         output = process.stderr.read().strip()
-        # print(f'SortieErr {output}')
-
         # Split the output into lines
         lines = output.strip().split("\n")
         packages: dict[str, str] = {}

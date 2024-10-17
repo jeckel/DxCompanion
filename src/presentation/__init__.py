@@ -1,7 +1,8 @@
 from textual.app import App, ComposeResult
-from textual.widgets import TabbedContent, Header, Footer
+from textual.widgets import Footer, Header, TabbedContent
 
 from models import Project
+
 from .composer import ComposerPan
 from .docker import DockerPan
 from .summary import ProjectSummaryPan
