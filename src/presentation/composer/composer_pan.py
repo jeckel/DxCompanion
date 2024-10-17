@@ -1,7 +1,7 @@
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal
-from textual.widgets import TabPane
+from textual.widgets import Button, TabPane
 from textual.worker import Worker, WorkerState
 
 from composer_utils import composer_updatable
@@ -41,16 +41,18 @@ class ComposerPan(TabPane):
         """Called when the worker state changes."""
         if event.state == WorkerState.SUCCESS:
             packages_updatable = event.worker.result
-            table: ComposerPackagesTable = self.query_one("#composer-packages-table")
-            table.set_requirements(
+            package_table: ComposerPackagesTable = self.query_one(
+                "#composer-packages-table"
+            )
+            package_table.set_requirements(
                 self.composer.required_packages,
                 self.composer.locked_packages,
                 packages_updatable,
             )
-            table: ComposerPackagesTable = self.query_one(
+            package_dev_table: ComposerPackagesTable = self.query_one(
                 "#composer-packages-dev-table"
             )
-            table.set_requirements(
+            package_dev_table.set_requirements(
                 self.composer.required_packages_dev,
                 self.composer.locked_packages_dev,
                 packages_updatable,
@@ -65,7 +67,7 @@ class ComposerPan(TabPane):
             self.loading = False
 
     @on(ComposerScriptButton.Pressed)
-    def on_pressed(self, event: ComposerScriptButton.Pressed) -> None:
+    def on_pressed(self, event: Button.Pressed) -> None:
         if isinstance(event.button, ComposerScriptButton):
             self.app.push_screen(
                 TerminalModal(

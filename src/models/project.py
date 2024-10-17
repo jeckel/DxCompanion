@@ -16,7 +16,7 @@ class Project(BaseModel):
         return os.path.basename(self.path)
 
     @field_validator("path", mode="before")
-    def check_directory_exists(cls, v):
+    def check_directory_exists(cls, v) -> str:
         if not os.path.isdir(v):
             raise ValueError(f"Provided path '{v}' is not a valid directory.")
         return v
@@ -32,5 +32,5 @@ class Project(BaseModel):
     @cached_property
     def composer_json(self) -> Optional[Composer]:
         if not self.composer:
-            return
+            return None
         return Composer.from_json(self.path)

@@ -9,9 +9,8 @@ def composer_updatable(path: str) -> dict[str, str]:
         stderr=subprocess.PIPE,
         text=True,
     ) as process:
-        output = process.stderr.read().strip()
-        # Split the output into lines
-        lines = output.strip().split("\n")
+        stdout, stderr = process.communicate()
+        lines = stdout.strip().split("\n")
         packages: dict[str, str] = {}
 
         # Processing lines for packages

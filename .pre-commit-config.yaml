@@ -38,3 +38,11 @@ repos:
         files: src/
         types: [file, python]
         args: [--max-line-length=131, --ignore, "F401"]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        files: src/
+        types: [file, python]
+#        args: [--config-file=./.styleconfigs/mypy.ini]
