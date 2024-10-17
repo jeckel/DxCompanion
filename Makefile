@@ -1,4 +1,4 @@
-.PHONY: console console-quiet .uv
+.PHONY: console console-quiet .uv install pre-commit
 
 .uv:
 	@if ! which uv > /dev/null 2>&1; then \
@@ -16,5 +16,8 @@ console-quiet: .uv
 	@uv run textual console -x EVENT
 	#@uv run textual console -x SYSTEM -x EVENT -x DEBUG -x INFO
 
-pre-commit: .uv
+pre-commit: .uv install
 	@uv run pre-commit run --all-files
+
+install: .uv
+	@uv run pre-commit install

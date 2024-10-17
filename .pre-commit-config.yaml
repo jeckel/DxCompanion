@@ -23,14 +23,6 @@ repos:
         files: src/
         types: [file, python]
 
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        name: isort (python)
-        files: src/
-        types: [ file, python ]
-
   - repo: https://github.com/pycqa/flake8
     rev: 7.1.1
     hooks:
@@ -45,4 +37,3 @@ repos:
       - id: mypy
         files: src/
         types: [file, python]
-#        args: [--config-file=./.styleconfigs/mypy.ini]
