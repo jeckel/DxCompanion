@@ -1,14 +1,14 @@
 import typer
 from pydantic_core._pydantic_core import ValidationError
+from rich import print
 
 from composer_utils import composer_updatable
 from models import Project
 from presentation import MainApp
 from settings import settings
 
-from rich import print
-
 app = typer.Typer()
+
 
 @app.command()
 def tui(project_path: str) -> None:
@@ -22,6 +22,7 @@ def tui(project_path: str) -> None:
     print(f"Launch tui for {project.name} project")
     app = MainApp(project)
     app.run()
+
 
 @app.command()
 def debug(project_path: str) -> None:

@@ -15,3 +15,6 @@ console: .uv
 console-quiet: .uv
 	@uv run textual console -x EVENT
 	#@uv run textual console -x SYSTEM -x EVENT -x DEBUG -x INFO
+
+pre-commit: .uv
+	@uv run pre-commit run --all-files

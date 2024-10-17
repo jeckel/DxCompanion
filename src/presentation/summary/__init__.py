@@ -1,7 +1,7 @@
 from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Container
-from textual.widgets import TabPane, Label
+from textual.widgets import Label, TabPane
 
 from models import Project
 

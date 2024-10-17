@@ -13,5 +13,6 @@ dependencies = [
 
 [tool.uv]
 dev-dependencies = [
+    "pre-commit>=4.0.1",
     "textual-dev>=1.6.1",
 ]
