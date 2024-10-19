@@ -1,14 +1,11 @@
-from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file='.env',
-        env_file_encoding='utf-8',
-        extra='ignore'
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
     )
-    __app_name__ = 'Project Manager'
+    __app_name__ = "Project Manager"
     # pocket_consumer_key: str = Field()
     # pocket_access_token: str = Field('')
     # pocket_username: str = Field('')
