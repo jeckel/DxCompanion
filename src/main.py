@@ -33,8 +33,8 @@ def debug(project_path: str) -> None:
         print("Validation error:", e)
         exit(1)
 
-    print(project.composer_json)
-    composer_updatable(project)
+    # print(project.composer_json)
+    print(composer_updatable(project))
 
 
 def main() -> None:

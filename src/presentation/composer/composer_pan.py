@@ -5,16 +5,18 @@ from textual.widgets import Button, TabPane
 from textual.worker import Worker, WorkerState
 
 from composer_utils import composer_updatable
+from models import Project
 from models.composer import Composer
 from presentation.component import TerminalModal
 
-from . import ComposerPackagesTable, ComposerScriptButton
+from .composer_packages_table import ComposerPackagesTable
+from .composer_script_button import ComposerScriptButton
 
 
 class ComposerPan(TabPane):
-    def __init__(self, composer_dir: str, **kwargs):
-        self.composer_dir = composer_dir
-        self.composer = Composer.from_json(composer_dir)
+    def __init__(self, project: Project, **kwargs):
+        self.project = project
+        self.composer = Composer.from_json(project.path)
         super().__init__(**kwargs, title="Composer", id="composer-pan")
 
     def compose(self) -> ComposeResult:
@@ -34,7 +36,7 @@ class ComposerPan(TabPane):
     @work(exclusive=True, thread=True)
     async def _load_composer(self) -> dict[str, str]:
         # return {}
-        return composer_updatable(self.composer_dir)
+        return composer_updatable(self.project)
 
     @on(Worker.StateChanged)
     async def refresh_listview(self, event: Worker.StateChanged) -> None:
@@ -72,7 +74,24 @@ class ComposerPan(TabPane):
             self.app.push_screen(
                 TerminalModal(
                     command=["composer", "--no-ansi", event.button.script_name],
-                    path=self.composer_dir,
+                    path=self.project.path,
                     use_stderr=True,
+                    allow_rerun=True
                 )
             )
+
+    @on(ComposerPackagesTable.UpdatePackageClicked)
+    def on_update_package_clicked(self, event: ComposerPackagesTable.UpdatePackageClicked) -> None:
+        self.app.push_screen(
+            TerminalModal(
+                command=["composer", "--no-ansi", "update", event.package],
+                path=self.project.path,
+                use_stderr=True,
+            ),
+            self.terminal_modal_callback
+        )
+
+    def terminal_modal_callback(self, result: bool) -> None:
+        if result:
+            self.loading = True
+            self._load_composer()

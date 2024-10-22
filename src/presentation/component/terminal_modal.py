@@ -7,21 +7,28 @@ from textual.screen import ModalScreen
 from textual.widgets import Button, RichLog, Static
 
 
-class TerminalModal(ModalScreen):
+class TerminalModal(ModalScreen[bool]):
     def __init__(
-        self, command: str | list[str], path: str, use_stderr: bool = False, **kwargs
+        self,
+        command: str | list[str],
+        path: str,
+        use_stderr: bool = False,
+        allow_rerun: bool = False,
+        **kwargs
     ):
         super().__init__(**kwargs)
         self.command = command
         self.path = path
         self.modal_title = f"Running: {" ".join(self.command)}"
         self.use_stderr = use_stderr
+        self.allow_rerun = allow_rerun
         self.terminal = RichLog(
             id="terminal_command",
             highlight=True,
             markup=True,
             classes="modal_container",
         )
+        self._result = False
 
     def compose(self) -> ComposeResult:
         with Container(id="modal_container"):
@@ -30,6 +37,8 @@ class TerminalModal(ModalScreen):
             yield self.terminal
             with Horizontal(classes="button_container"):
                 yield Button("Close", id="modal_close")
+                if self.allow_rerun:
+                    yield Button.success(" Rerun", id="modal_rerun")
 
     def on_mount(self) -> None:
         self._start()
@@ -62,9 +71,17 @@ class TerminalModal(ModalScreen):
             self.terminal.write(f"Return code [bold]{process.returncode}[/bold]")
             if process.returncode == 0:
                 self.terminal.write("[bold green]Completed![/bold green]")
+                self._result = True
             else:
                 self.terminal.write("[bold red]Completed with errors![/bold red]")
+                self._result = False
+
 
     @on(Button.Pressed, "#modal_close")
     def on_close(self, event: Button.Pressed) -> None:
-        self.app.pop_screen()
+        self.dismiss(self._result)
+
+    @on(Button.Pressed, "#modal_rerun")
+    def on_rerun(self, event: Button.Pressed) -> None:
+        self.terminal.clear()
+        self._start()

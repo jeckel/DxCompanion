@@ -26,6 +26,6 @@ class MainApp(App):
         yield Header()
         with TabbedContent(initial="summary-pan"):
             yield ProjectSummaryPan(project=self._project)
-            yield ComposerPan(composer_dir=self._project.path)
+            yield ComposerPan(project=self._project)
             yield DockerPan(project=self._project)
         yield Footer()

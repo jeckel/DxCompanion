@@ -1,5 +1,7 @@
 from rich.text import Text
 from textual.widgets import DataTable
+from textual import on
+from textual.message import Message
 
 
 class ComposerPackagesTable(DataTable):
@@ -14,8 +16,8 @@ class ComposerPackagesTable(DataTable):
     def __init__(self, title: str, **kwargs):
         super().__init__(**kwargs)
         self.border_title = title
-        self.cursor_type = "row"
-        self.add_columns(*("Package", "Required", "Locked", "Upgrade"))
+        self.add_columns(*("Package", "Required", "Locked", "Upgrade", "Actions"))
+        self.update_button = Text(" Update", style="bold")
 
     def set_requirements(
         self,
@@ -23,29 +25,34 @@ class ComposerPackagesTable(DataTable):
         locked_packages: dict[str, str],
         packages_updatable: dict[str, str],
     ) -> None:
+        self.clear()
         for package, version in required_packages.items():
             styled_row = [
                 Text(str(package), justify="left"),
                 Text(str(version), style="italic #03AC13", justify="right"),
+                Text(
+                    str(locked_packages[package]) if package in locked_packages else "",
+                    style="italic #FF0000",
+                    justify="right",
+                ),
+                Text(
+                    str(packages_updatable[package]) if package in packages_updatable else "",
+                    style="italic #00FF00",
+                    justify="right",
+                ),
+                self.update_button if package in packages_updatable else ""
             ]
-            if package in locked_packages:
-                styled_row.append(
-                    Text(
-                        str(locked_packages[package]),
-                        style="italic #FF0000",
-                        justify="right",
-                    )
-                )
-            else:
-                styled_row.append("")
-            if package in packages_updatable:
-                styled_row.append(
-                    Text(
-                        str(packages_updatable[package]),
-                        style="italic #00FF00",
-                        justify="right",
-                    )
-                )
-            else:
-                styled_row.append("")
-            self.add_row(*styled_row)
+            self.add_row(*styled_row, key=package)
+
+    @on(DataTable.CellSelected)
+    def on_update_package_clicked(self, event: DataTable.CellSelected) -> None:
+        if event.value == self.update_button:
+            self.post_message(self.UpdatePackageClicked(event.cell_key.row_key.value))
+
+    class UpdatePackageClicked(Message):
+        """
+        Message sent when a package is selected for update
+        """
+        def __init__(self, package: str) -> None:
+            self.package = package
+            super().__init__()
