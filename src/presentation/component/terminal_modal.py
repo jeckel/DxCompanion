@@ -8,6 +8,38 @@ from textual.widgets import Button, RichLog, Static
 
 
 class TerminalModal(ModalScreen[bool]):
+    CSS = """
+        TerminalModal {
+            align: center middle;
+        
+            Container {
+                margin: 4 8;
+                Horizontal > Label {
+                    padding: 0 1;
+                }
+                RichLog {
+                    padding: 1 1;
+                }
+            }
+        
+            .modal_title {
+                height: 1;
+                background: $primary-background;
+                width: 100%;
+                padding: 0 1;
+            }
+            .button_container {
+                height: 3;
+                background: $primary-background;
+                width: 100%;
+                align: center middle;
+                Button {
+                    margin: 0 1;
+                }
+            }
+        }
+        """
+
     def __init__(
         self,
         command: str | list[str],

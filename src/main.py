@@ -3,9 +3,9 @@ from pydantic_core._pydantic_core import ValidationError
 from rich import print
 
 from composer_utils import composer_updatable
+from service_locator import Container
 from models import Project
 from presentation import MainApp
-from settings import settings
 
 app = typer.Typer()
 
@@ -33,12 +33,12 @@ def debug(project_path: str) -> None:
         print("Validation error:", e)
         exit(1)
 
-    # print(project.composer_json)
     print(composer_updatable(project))
 
 
 def main() -> None:
-    app(prog_name=settings.__app_name__)
+    container = Container()
+    app()
 
 
 if __name__ == "__main__":
