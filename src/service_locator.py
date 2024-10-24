@@ -1,11 +1,14 @@
 from dependency_injector import containers, providers
 
-from services import DockerClient
+from models import Project
+from services import DockerClient, ComposerClient
 
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
     docker_client = providers.Singleton(DockerClient)
+    composer_client = providers.Singleton(ComposerClient)
+    project = providers.Factory(Project)
 
     # api_client = providers.Singleton(
     #     ApiClient,

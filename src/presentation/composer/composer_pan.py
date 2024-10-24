@@ -4,10 +4,10 @@ from textual.containers import Container, Horizontal
 from textual.widgets import Button, TabPane
 from textual.worker import Worker, WorkerState
 
-from composer_utils import composer_updatable
 from models import Project
 from models.composer import Composer
 from presentation.component import TerminalModal
+from service_locator import Container as ServiceContainer
 
 from .composer_packages_table import ComposerPackagesTable
 from .composer_script_button import ComposerScriptButton
@@ -36,31 +36,41 @@ class ComposerPan(TabPane):
     @work(exclusive=True, thread=True)
     async def _load_composer(self) -> dict[str, str]:
         # return {}
-        return composer_updatable(self.project)
+        return ServiceContainer.composer_client().updatable_packages(self.project)
+        # return ServiceContainer.composer_client().updatable_packages(self.project)
+        # return composer_updatable(self.project)
 
     @on(Worker.StateChanged)
     async def refresh_listview(self, event: Worker.StateChanged) -> None:
         """Called when the worker state changes."""
         if event.state == WorkerState.SUCCESS:
             packages_updatable = event.worker.result
+            composer = ServiceContainer.composer_client().composer_json(self.project)
             package_table: ComposerPackagesTable = self.query_one(
                 "#composer-packages-table"
             )
             package_table.set_requirements(
-                self.composer.required_packages,
-                self.composer.locked_packages,
+                composer.required_packages,
+                composer.locked_packages,
                 packages_updatable,
             )
             package_dev_table: ComposerPackagesTable = self.query_one(
                 "#composer-packages-dev-table"
             )
             package_dev_table.set_requirements(
-                self.composer.required_packages_dev,
-                self.composer.locked_packages_dev,
+                composer.required_packages_dev,
+                composer.locked_packages_dev,
                 packages_updatable,
             )
 
             scripts = self.query_one("#composer-actions")
+            await scripts.remove_children()
+
+            await scripts.mount(ComposerScriptButton(script_name="install"))
+            await scripts.mount(
+                ComposerScriptButton(script_name="update", label="update all")
+            )
+
             for script in self.composer.manual_scripts:
                 # self.log(f"Bouton {script}")
                 new_button = ComposerScriptButton(script_name=script)

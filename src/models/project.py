@@ -1,3 +1,4 @@
+import json
 import os
 from functools import cached_property
 from typing import Optional
@@ -9,13 +10,20 @@ from models.composer import Composer
 
 class Project(BaseModel):
     path: str
+    project_name: Optional[str] = None
     composer: Optional[bool] = Field(default=False)
     composer_cmd: list[str] = ["composer"]
     docker_composer_cmd: list[str] = ["docker", "compose"]
 
+    @classmethod
+    def from_json(cls, json_path: str):
+        with open(json_path, "r") as file:
+            data = json.load(file)
+            return cls(**data)
+
     @cached_property
     def name(self) -> str:
-        return os.path.basename(self.path)
+        return self.project_name or os.path.basename(self.path)
 
     @field_validator("path", mode="before")
     def check_directory_exists(cls, v) -> str:
@@ -31,8 +39,8 @@ class Project(BaseModel):
             self.composer = True
         return self
 
-    @cached_property
-    def composer_json(self) -> Optional[Composer]:
-        if not self.composer:
-            return None
-        return Composer.from_json(self.path)
+    # @cached_property
+    # def composer_json(self) -> Optional[Composer]:
+    #     if not self.composer:
+    #         return None
+    #     return Composer.from_json(self.path)

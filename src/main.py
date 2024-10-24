@@ -1,8 +1,6 @@
 import typer
-from pydantic_core._pydantic_core import ValidationError
-from rich import print
+from dependency_injector import providers
 
-from composer_utils import composer_updatable
 from service_locator import Container
 from models import Project
 from presentation import MainApp
@@ -12,32 +10,14 @@ app = typer.Typer()
 
 @app.command()
 def tui(project_path: str) -> None:
-    try:
-        project = Project(path=project_path)
-        print(f"Composer present: {project.composer}")
-    except ValidationError as e:
-        print("Validation error:", e)
-        exit(1)
-
-    print(f"Launch tui for {project.name} project")
-    app = MainApp(project)
-    app.run()
-
-
-@app.command()
-def debug(project_path: str) -> None:
-    try:
-        project = Project(path=project_path)
-        print(f"Composer present: {project.composer}")
-    except ValidationError as e:
-        print("Validation error:", e)
-        exit(1)
-
-    print(composer_updatable(project))
+    project = Project.from_json(json_path=project_path)
+    container = Container()
+    container.project.override(providers.Singleton(Project, value=project))
+    tui_app = MainApp(project)
+    tui_app.run()
 
 
 def main() -> None:
-    Container()
     app()
 
 

@@ -21,6 +21,7 @@ class MainApp(App):
     def __init__(self, project: Project):
         self._project = project
         super().__init__()
+        self.title = f"DX Companion - {project.name}"
 
     def compose(self) -> ComposeResult:
         yield Header()

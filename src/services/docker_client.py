@@ -1,7 +1,9 @@
 import docker
 
+from .base_service import BaseService
 
-class DockerClient:
+
+class DockerClient(BaseService):
     def __init__(self):
         self.client = docker.from_env()
 

@@ -43,9 +43,11 @@ DockerPan {
     Horizontal {
         height: 3;
         padding: 0 1;
+        Label {
+          padding: 1 1;
+        }
     }
     ContainerLogWidget {
-        height: auto;
         border-title-color: $accent;
         border: $primary-background round;
     }
