@@ -8,7 +8,7 @@ class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
     docker_client = providers.Singleton(DockerClient)
     composer_client = providers.Singleton(ComposerClient)
-    # project = providers.Factory(Project)
+    project = providers.Factory(Project)
 
     # api_client = providers.Singleton(
     #     ApiClient,
