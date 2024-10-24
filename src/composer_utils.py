@@ -1,16 +1,18 @@
 import subprocess
 
+from models import Project
 
-def composer_updatable(path: str) -> dict[str, str]:
+
+def composer_updatable(project: Project) -> dict[str, str]:
     with subprocess.Popen(
         ["composer", "update", "--dry-run"],
-        cwd=path,
+        cwd=project.path,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
     ) as process:
         stdout, stderr = process.communicate()
-        lines = stdout.strip().split("\n")
+        lines = stderr.strip().split("\n")
         packages: dict[str, str] = {}
 
         # Processing lines for packages

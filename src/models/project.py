@@ -10,6 +10,8 @@ from models.composer import Composer
 class Project(BaseModel):
     path: str
     composer: Optional[bool] = Field(default=False)
+    composer_cmd: list[str] = ["composer"]
+    docker_composer_cmd: list[str] = ["docker", "compose"]
 
     @cached_property
     def name(self) -> str:
