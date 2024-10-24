@@ -37,7 +37,7 @@ def debug(project_path: str) -> None:
 
 
 def main() -> None:
-    container = Container()
+    Container()
     app()
 
 

@@ -36,11 +36,13 @@ class ComposerPackagesTable(DataTable):
                     justify="right",
                 ),
                 Text(
-                    str(packages_updatable[package]) if package in packages_updatable else "",
+                    str(packages_updatable[package])
+                    if package in packages_updatable
+                    else "",
                     style="italic #00FF00",
                     justify="right",
                 ),
-                self.update_button if package in packages_updatable else ""
+                self.update_button if package in packages_updatable else "",
             ]
             self.add_row(*styled_row, key=package)
 
@@ -53,6 +55,7 @@ class ComposerPackagesTable(DataTable):
         """
         Message sent when a package is selected for update
         """
+
         def __init__(self, package: str) -> None:
             self.package = package
             super().__init__()

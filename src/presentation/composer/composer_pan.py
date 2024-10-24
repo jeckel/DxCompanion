@@ -76,19 +76,21 @@ class ComposerPan(TabPane):
                     command=["composer", "--no-ansi", event.button.script_name],
                     path=self.project.path,
                     use_stderr=True,
-                    allow_rerun=True
+                    allow_rerun=True,
                 )
             )
 
     @on(ComposerPackagesTable.UpdatePackageClicked)
-    def on_update_package_clicked(self, event: ComposerPackagesTable.UpdatePackageClicked) -> None:
+    def on_update_package_clicked(
+        self, event: ComposerPackagesTable.UpdatePackageClicked
+    ) -> None:
         self.app.push_screen(
             TerminalModal(
                 command=["composer", "--no-ansi", "update", event.package],
                 path=self.project.path,
                 use_stderr=True,
             ),
-            self.terminal_modal_callback
+            self.terminal_modal_callback,
         )
 
     def terminal_modal_callback(self, result: bool) -> None:

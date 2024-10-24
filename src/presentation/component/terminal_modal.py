@@ -11,7 +11,7 @@ class TerminalModal(ModalScreen[bool]):
     CSS = """
         TerminalModal {
             align: center middle;
-        
+
             Container {
                 margin: 4 8;
                 Horizontal > Label {
@@ -21,7 +21,7 @@ class TerminalModal(ModalScreen[bool]):
                     padding: 1 1;
                 }
             }
-        
+
             .modal_title {
                 height: 1;
                 background: $primary-background;
@@ -46,7 +46,7 @@ class TerminalModal(ModalScreen[bool]):
         path: str,
         use_stderr: bool = False,
         allow_rerun: bool = False,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.command = command
@@ -107,7 +107,6 @@ class TerminalModal(ModalScreen[bool]):
             else:
                 self.terminal.write("[bold red]Completed with errors![/bold red]")
                 self._result = False
-
 
     @on(Button.Pressed, "#modal_close")
     def on_close(self, event: Button.Pressed) -> None:
