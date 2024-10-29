@@ -1,7 +1,7 @@
-#project_summary {
-    layout: grid;
-    grid-size: 2 2;
-    grid-gutter: 1;
+ProjectSummaryContainer {
+#    layout: grid;
+#    grid-size: 2 2;
+#    grid-gutter: 1;
     border-title-color: $accent;
     border: $primary-background round;
     content-align: center middle;
@@ -10,7 +10,7 @@
     }
 }
 
-ComposerPan {
+ComposerContainer {
     Container {
         layout: grid;
         grid-size: 1 3;
@@ -39,7 +39,7 @@ TabPane {
   margin: 0 0;
 }
 
-DockerPan {
+DockerContainer {
     Horizontal {
         height: 3;
         padding: 0 1;

@@ -9,10 +9,10 @@ from presentation.docker.container_log_widget import ContainerLogWidget
 from presentation.docker.container_select import ContainerSelect
 
 
-class DockerPan(TabPane):
+class DockerContainer(Container):
     def __init__(self, project: Project, **kwargs):
         self.project = project
-        super().__init__(**kwargs, title="Docker", id="docker-pan")
+        super().__init__(**kwargs)
         self.docker_logs = ContainerLogWidget()
 
     def compose(self) -> ComposeResult:

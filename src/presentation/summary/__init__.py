@@ -1,17 +1,19 @@
-from rich.text import Text
-from textual.app import ComposeResult
 from textual.containers import Container
-from textual.widgets import Label, TabPane
+from textual.widgets import Markdown
 
 from models import Project
 
 
-class ProjectSummaryPan(TabPane):
+# service: Service = Provide[Container.service]
+class ProjectSummaryContainer(Container):
+    BORDER_TITLE = "Project's summary"
     def __init__(self, project: Project, **kwargs):
         self.project = project
-        super().__init__(**kwargs, title="Summary", id="summary-pan")
+        super().__init__(**kwargs)
 
-    def compose(self) -> ComposeResult:
-        with Container(id="project_summary"):
-            yield Label(Text(str("Project :"), style="italic #03AC13", justify="right"))
-            yield Label(Text(str(self.project.name), style="italic"))
+    def compose(self):
+        yield Markdown(
+            f"""
+# Project : {self.project.project_name}
+"""
+        )
