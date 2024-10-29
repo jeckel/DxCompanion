@@ -13,11 +13,11 @@ from .composer_packages_table import ComposerPackagesTable
 from .composer_script_button import ComposerScriptButton
 
 
-class ComposerPan(TabPane):
+class ComposerContainer(Container):
     def __init__(self, project: Project, **kwargs):
         self.project = project
         self.composer = Composer.from_json(project.path)
-        super().__init__(**kwargs, title="Composer", id="composer-pan")
+        super().__init__(**kwargs)
 
     def compose(self) -> ComposeResult:
         with Container():
@@ -35,10 +35,7 @@ class ComposerPan(TabPane):
 
     @work(exclusive=True, thread=True)
     async def _load_composer(self) -> dict[str, str]:
-        # return {}
         return ServiceContainer.composer_client().updatable_packages(self.project)
-        # return ServiceContainer.composer_client().updatable_packages(self.project)
-        # return composer_updatable(self.project)
 
     @on(Worker.StateChanged)
     async def refresh_listview(self, event: Worker.StateChanged) -> None:
