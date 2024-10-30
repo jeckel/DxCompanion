@@ -14,4 +14,5 @@ class DockerClient(BaseService):
     def get_container_logs(self, container_id):
         """Fetches logs from a specific container."""
         container = self.client.containers.get(container_id)
+        # return container.logs(follow=True, tail=1000)
         return container.logs(stream=True, follow=True)

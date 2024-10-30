@@ -1,14 +1,14 @@
-ProjectSummaryContainer {
+# ProjectSummaryContainer {
 #    layout: grid;
 #    grid-size: 2 2;
 #    grid-gutter: 1;
-    border-title-color: $accent;
-    border: $primary-background round;
-    content-align: center middle;
-    Label {
-      width: 100%;
-    }
-}
+#    border-title-color: $accent;
+#    border: $primary-background round;
+#    content-align: center middle;
+#    Label {
+#      width: 100%;
+#    }
+# }
 
 ComposerContainer {
     Container {
