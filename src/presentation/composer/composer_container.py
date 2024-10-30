@@ -1,7 +1,7 @@
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal
-from textual.widgets import Button, TabPane
+from textual.widgets import Button, TabPane, Label
 from textual.worker import Worker, WorkerState
 
 from models import Project
@@ -14,6 +14,22 @@ from .composer_script_button import ComposerScriptButton
 
 
 class ComposerContainer(Container):
+    DEFAULT_CSS = """
+        ComposerContainer {
+            Container {
+                layout: grid;
+                grid-size: 1 3;
+
+                #composer-packages-table {
+                    row-span: 2;
+                }
+            }
+            #composer-actions {
+                height: 3;
+            }
+        }
+    """
+
     def __init__(self, project: Project, **kwargs):
         self.project = project
         self.composer = Composer.from_json(project.path)
@@ -40,40 +56,42 @@ class ComposerContainer(Container):
     @on(Worker.StateChanged)
     async def refresh_listview(self, event: Worker.StateChanged) -> None:
         """Called when the worker state changes."""
-        if event.state == WorkerState.SUCCESS:
-            packages_updatable = event.worker.result
-            composer = ServiceContainer.composer_client().composer_json(self.project)
-            package_table: ComposerPackagesTable = self.query_one(
-                "#composer-packages-table"
-            )
-            package_table.set_requirements(
-                composer.required_packages,
-                composer.locked_packages,
-                packages_updatable,
-            )
-            package_dev_table: ComposerPackagesTable = self.query_one(
-                "#composer-packages-dev-table"
-            )
-            package_dev_table.set_requirements(
-                composer.required_packages_dev,
-                composer.locked_packages_dev,
-                packages_updatable,
-            )
+        if event.state != WorkerState.SUCCESS:
+            return
+        packages_updatable = event.worker.result
+        composer = ServiceContainer.composer_client().composer_json(self.project)
+        package_table: ComposerPackagesTable = self.query_one(
+            "#composer-packages-table"
+        )
+        package_table.set_requirements(
+            composer.required_packages,
+            composer.locked_packages,
+            packages_updatable,
+        )
+        package_dev_table: ComposerPackagesTable = self.query_one(
+            "#composer-packages-dev-table"
+        )
+        package_dev_table.set_requirements(
+            composer.required_packages_dev,
+            composer.locked_packages_dev,
+            packages_updatable,
+        )
 
-            scripts = self.query_one("#composer-actions")
-            await scripts.remove_children()
+        scripts = self.query_one("#composer-actions")
+        await scripts.remove_children()
 
-            await scripts.mount(ComposerScriptButton(script_name="install"))
-            await scripts.mount(
-                ComposerScriptButton(script_name="update", label="update all")
-            )
+        await scripts.mount(ComposerScriptButton(script_name="install"))
+        await scripts.mount(
+            ComposerScriptButton(script_name="update", label="update all")
+        )
+        await scripts.mount(Label(" "))
 
-            for script in self.composer.manual_scripts:
-                # self.log(f"Bouton {script}")
-                new_button = ComposerScriptButton(script_name=script)
-                await scripts.mount(new_button)
+        for script in self.composer.manual_scripts:
+            # self.log(f"Bouton {script}")
+            new_button = ComposerScriptButton(script_name=script)
+            await scripts.mount(new_button)
 
-            self.loading = False
+        self.loading = False
 
     @on(ComposerScriptButton.Pressed)
     def on_pressed(self, event: Button.Pressed) -> None:

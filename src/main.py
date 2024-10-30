@@ -11,8 +11,7 @@ app = typer.Typer()
 @app.command()
 def tui(project_path: str) -> None:
     project = Project.from_json(json_path=project_path)
-    container = Container()
-    # container.project.override(providers.Singleton(Project, value=project))
+    Container()
     tui_app = MainApp(project)
     tui_app.run()
 

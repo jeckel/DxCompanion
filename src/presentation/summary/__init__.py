@@ -17,12 +17,13 @@ class ProjectSummaryContainer(Container):
             Markdown {
                 height: auto;
             }
-            
+
             #summary-actions {
                 height: 3;
             }
         }
     """
+
     def __init__(self, project: Project, **kwargs):
         self.project = project
         super().__init__(**kwargs)
@@ -38,12 +39,11 @@ class ProjectSummaryContainer(Container):
                 for label in self.project.actions.keys():
                     yield Button(label, name=label)
 
-
     @on(Button.Pressed)
     def on_pressed(self, event: Button.Pressed) -> None:
         self.app.push_screen(
             TerminalModal(
-                command=self.project.actions[event.button.name].split(' '),
+                command=self.project.actions[event.button.name].split(" "),
                 path=self.project.path,
                 allow_rerun=True,
             )
