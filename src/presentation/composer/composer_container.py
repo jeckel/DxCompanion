@@ -82,7 +82,6 @@ class ComposerContainer(Container):
                 TerminalModal(
                     command=["composer", "--no-ansi", event.button.script_name],
                     path=self.project.path,
-                    use_stderr=True,
                     allow_rerun=True,
                 )
             )

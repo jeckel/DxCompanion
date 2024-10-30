@@ -22,12 +22,6 @@ class Project(BaseModel):
             data = json.load(file)
             return cls(**data)
 
-    @classmethod
-    def from_json(cls, json_path: str):
-        with open(json_path, "r") as file:
-            data = json.load(file)
-            return cls(**data)
-
     @cached_property
     def name(self) -> str:
         return self.project_name or os.path.basename(self.path)
