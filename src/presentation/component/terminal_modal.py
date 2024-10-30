@@ -4,7 +4,7 @@ from textual.containers import Container, Horizontal
 from textual.screen import ModalScreen
 from textual.widgets import Button, Static
 
-from .terminal import Terminal
+from .terminal import Terminal, CommandType
 
 
 class TerminalModal(ModalScreen[bool]):
@@ -39,16 +39,16 @@ class TerminalModal(ModalScreen[bool]):
 
     def __init__(
         self,
-        command: list[str],
-        path: str,
+        command: CommandType,
         allow_rerun: bool = False,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.command = command
-        self.path = path
-        self.modal_title = f"Running: {" ".join(self.command)}"
+        # self.path = path
+        self.modal_title = f"Running: {self.command}"
         self.allow_rerun = allow_rerun
+        # self.shell = shell
         self.terminal = Terminal(
             id="terminal_command",
             classes="modal_container",
@@ -66,7 +66,7 @@ class TerminalModal(ModalScreen[bool]):
                     yield Button.success(" Rerun", id="modal_rerun")
 
     def on_mount(self) -> None:
-        self.terminal.execute(command=self.command, path=self.path)
+        self.terminal.execute(command=self.command)
 
     @on(Button.Pressed, "#modal_close")
     def on_close(self, event: Button.Pressed) -> None:
@@ -74,7 +74,7 @@ class TerminalModal(ModalScreen[bool]):
 
     @on(Button.Pressed, "#modal_rerun")
     def on_rerun(self, event: Button.Pressed) -> None:
-        self.terminal.execute(command=self.command, path=self.path)
+        self.terminal.execute(command=self.command)
 
     @on(Terminal.TerminalCompleted)
     def on_terminal_completed(self, event: Terminal.TerminalCompleted) -> None:

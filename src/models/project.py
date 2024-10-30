@@ -5,7 +5,12 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from models.composer import Composer
+
+class ProjectAction(BaseModel):
+    label: str
+    command: str
+    help: Optional[str] = None
+    use_shell: bool = False
 
 
 class Project(BaseModel):
@@ -14,7 +19,8 @@ class Project(BaseModel):
     composer: Optional[bool] = Field(default=False)
     composer_cmd: list[str] = ["composer"]
     docker_composer_cmd: list[str] = ["docker", "compose"]
-    actions: dict[str, str] = {}
+    actions: list[ProjectAction] = []
+    # actions: dict[str, str] = {}
 
     @classmethod
     def from_json(cls, json_path: str):

@@ -1,3 +1,4 @@
+from click import command
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal
@@ -6,7 +7,7 @@ from textual.worker import Worker, WorkerState
 
 from models import Project
 from models.composer import Composer
-from presentation.component import TerminalModal
+from presentation.component import TerminalModal, NonShellCommand
 from service_locator import Container as ServiceContainer
 
 from .composer_packages_table import ComposerPackagesTable
@@ -98,8 +99,10 @@ class ComposerContainer(Container):
         if isinstance(event.button, ComposerScriptButton):
             self.app.push_screen(
                 TerminalModal(
-                    command=["composer", "--no-ansi", event.button.script_name],
-                    path=self.project.path,
+                    command=NonShellCommand(
+                        path=self.project.path,
+                        command=["composer", "--no-ansi", event.button.script_name],
+                    ),
                     allow_rerun=True,
                 )
             )
@@ -110,9 +113,10 @@ class ComposerContainer(Container):
     ) -> None:
         self.app.push_screen(
             TerminalModal(
-                command=["composer", "--no-ansi", "update", event.package],
-                path=self.project.path,
-                use_stderr=True,
+                command=NonShellCommand(
+                    self.project.path,
+                    ["composer", "--no-ansi", "update", event.package],
+                )
             ),
             self.terminal_modal_callback,
         )
