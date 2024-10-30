@@ -13,6 +13,14 @@ class ComposerPackagesTable(DataTable):
     - package update (newer version than the installed one, and still matching the requirements)
     """
 
+    DEFAULT_CSS = """
+        ComposerPackagesTable {
+           border-title-color: $accent;
+           border: $primary-background round;
+           content-align: center middle;
+        }
+    """
+
     def __init__(self, title: str, **kwargs):
         super().__init__(**kwargs)
         self.border_title = title
