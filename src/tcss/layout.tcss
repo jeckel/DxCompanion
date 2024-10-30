@@ -1,35 +1,3 @@
-# ProjectSummaryContainer {
-#    layout: grid;
-#    grid-size: 2 2;
-#    grid-gutter: 1;
-#    border-title-color: $accent;
-#    border: $primary-background round;
-#    content-align: center middle;
-#    Label {
-#      width: 100%;
-#    }
-# }
-
-ComposerContainer {
-    Container {
-        layout: grid;
-        grid-size: 1 3;
-
-        ComposerPackagesTable {
-           border-title-color: $accent;
-           border: $primary-background round;
-           content-align: center middle;
-        }
-
-        #composer-packages-table {
-            row-span: 2;
-        }
-    }
-    #composer-actions {
-        height: 3;
-    }
-}
-
 ComposerScriptButton {
   width: auto;
 }

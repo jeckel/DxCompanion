@@ -4,7 +4,7 @@ from textual.containers import Container, Horizontal
 from textual.screen import ModalScreen
 from textual.widgets import Button, Static
 
-from presentation.component.terminal import Terminal
+from .terminal import Terminal
 
 
 class TerminalModal(ModalScreen[bool]):
@@ -39,7 +39,7 @@ class TerminalModal(ModalScreen[bool]):
 
     def __init__(
         self,
-        command: str | list[str],
+        command: list[str],
         path: str,
         allow_rerun: bool = False,
         **kwargs,
@@ -76,11 +76,9 @@ class TerminalModal(ModalScreen[bool]):
     def on_rerun(self, event: Button.Pressed) -> None:
         self.terminal.execute(command=self.command, path=self.path)
 
-
     @on(Terminal.TerminalCompleted)
     def on_terminal_completed(self, event: Terminal.TerminalCompleted) -> None:
         self.query_one("#modal_button_container").loading = False
-
 
     @on(Terminal.TerminalStarted)
     def on_terminal_started(self, event: Terminal.TerminalStarted) -> None:
