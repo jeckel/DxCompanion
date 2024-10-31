@@ -1,1 +1,2 @@
 from .composer_container import ComposerContainer
+from .composer_message import ComposerCommandRequested

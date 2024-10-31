@@ -1,7 +1,7 @@
 from textual.widgets import RichLog
 from textual import work
 
-from service_locator import Container
+from service_locator import ServiceContainer
 
 
 class ContainerLogWidget(RichLog):
@@ -13,6 +13,6 @@ class ContainerLogWidget(RichLog):
         self.clear()
         self.border_title = f"Logs for container {container_id}"
 
-        for log in Container.docker_client().get_container_logs(container_id):
+        for log in ServiceContainer.docker_client().get_container_logs(container_id):
             # Convert bytes to string and update the logs widget
             self.write(log.decode("utf-8").strip())

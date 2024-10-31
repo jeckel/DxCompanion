@@ -1,10 +1,35 @@
 import subprocess
 from time import sleep
+from typing import Union, Optional
 
+from dataclasses import dataclass
 from textual.widgets import RichLog
 from textual import on
 from textual.message import Message
 from textual.worker import Worker, WorkerState
+
+
+@dataclass
+class ShellCommand:
+    path: str
+    command: str
+    shell: bool = True
+
+    def __str__(self):
+        return self.command
+
+
+@dataclass
+class NonShellCommand:
+    path: str
+    command: list[str]
+    shell: bool = False
+
+    def __str__(self):
+        return " ".join(self.command)
+
+
+CommandType = Union[ShellCommand, NonShellCommand]
 
 
 class Terminal(RichLog):
@@ -13,36 +38,38 @@ class Terminal(RichLog):
             padding: 1 1;
         }
     """
-    command: list[str] = []
+    command: Optional[CommandType] = None
     current_worker: Worker | None = None
 
     def __init__(self, **kwargs):
         super().__init__(highlight=True, markup=True, **kwargs)
 
-    def execute(self, command: list[str], path: str) -> None:
-        self.command = command
+    def execute(self, command: CommandType) -> None:
+        # self.command = command
         self.current_worker = self.run_worker(
-            self._execute(command, path), exclusive=True, thread=True
+            self._execute(command), exclusive=True, thread=True
         )
 
     def is_running(self) -> bool:
         return self.current_worker is not None and self.current_worker.is_running
 
-    async def _execute(self, command: list[str], path: str) -> None:
+    async def _execute(self, command: CommandType) -> None:
         self.command = command
+        self.post_message(self.TerminalStarted(self.command))
         self.clear()
-        self.write(f"Path:    [bold blue]{path}[/bold blue]")
-        self.write(f"Command: [bold blue]{" ".join(command)}[/bold blue]")
+        self.write(f"Path:    [bold blue]{command.path}[/bold blue]")
+        self.write(f"Command: [bold blue]{command}[/bold blue]")
         self.write(
             "----------------------------------------------------------------",
             shrink=True,
         )
-        self.log(f"Running: {command} in {path}")
+        self.log(f"Running: {command.command} in {command.path}")
         with subprocess.Popen(
-            command,
-            cwd=path,
+            command.command,
+            cwd=command.path,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
+            shell=command.shell,
             text=True,
         ) as process:
             assert process.stdout is not None
@@ -63,8 +90,9 @@ class Terminal(RichLog):
 
     @on(Worker.StateChanged)
     async def worker_state_changed(self, event: Worker.StateChanged) -> None:
-        if event.state == WorkerState.RUNNING:
-            self.post_message(self.TerminalStarted(self.command))
+        if event.state == WorkerState.PENDING or event.state == WorkerState.RUNNING:
+            return
+        assert self.command is not None
         if event.state == WorkerState.SUCCESS:
             self.post_message(self.TerminalCompleted(self.command))
         if event.state == WorkerState.CANCELLED or event.state == WorkerState.ERROR:
@@ -75,7 +103,7 @@ class Terminal(RichLog):
         Message sent when terminal execution starts
         """
 
-        def __init__(self, command: list[str]) -> None:
+        def __init__(self, command: CommandType) -> None:
             self.command = command
             super().__init__()
 
@@ -84,7 +112,7 @@ class Terminal(RichLog):
         Message sent when terminal execution completes
         """
 
-        def __init__(self, command: list[str], success: bool = True) -> None:
+        def __init__(self, command: CommandType, success: bool = True) -> None:
             self.command = command
             self.success = success
             super().__init__()

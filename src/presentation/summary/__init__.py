@@ -1,9 +1,7 @@
-from textual.containers import Container, Horizontal
-from textual.widgets import Markdown, Button
-from textual import on
+from textual.containers import Container
+from textual.widgets import Markdown
 
 from models import Project
-from presentation.component import TerminalModal
 
 
 # service: Service = Provide[Container.service]
@@ -17,10 +15,6 @@ class ProjectSummaryContainer(Container):
             Markdown {
                 height: auto;
             }
-
-            #summary-actions {
-                height: 3;
-            }
         }
     """
 
@@ -33,18 +27,4 @@ class ProjectSummaryContainer(Container):
             f"""
 # Project : {self.project.project_name}
 """
-        )
-        if len(self.project.actions) > 0:
-            with Horizontal(id="summary-actions"):
-                for label in self.project.actions.keys():
-                    yield Button(label, name=label)
-
-    @on(Button.Pressed)
-    def on_pressed(self, event: Button.Pressed) -> None:
-        self.app.push_screen(
-            TerminalModal(
-                command=self.project.actions[event.button.name].split(" "),
-                path=self.project.path,
-                allow_rerun=True,
-            )
         )
