@@ -13,9 +13,6 @@ from .composer_script_button import ComposerScriptButton
 
 
 class ComposerContainer(Container):
-    BINDINGS = [
-        ("ctrl+r", "refresh", "Refresh"),
-    ]
     DEFAULT_CSS = """
         ComposerContainer {
             Container {

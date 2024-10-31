@@ -26,3 +26,7 @@ class DockerContainer(Container):
     @on(Select.Changed)
     def select_changed(self, event: Select.Changed) -> None:
         self.docker_logs.stream_logs(event.value)
+
+    @on(Button.Pressed, "#docker_refresh")
+    def refresh_container_list(self):
+        self.query_one(ContainerSelect).refresh_container_list()

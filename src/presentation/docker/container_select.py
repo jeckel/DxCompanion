@@ -12,3 +12,10 @@ class ContainerSelect(Select):
             ),
             **kargs
         )
+
+    def refresh_container_list(self):
+        self.clear()
+        self.set_options(
+            (docker_container.name, docker_container.id)
+            for docker_container in ServiceContainer.docker_client().get_running_containers()
+        )

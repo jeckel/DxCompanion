@@ -4,6 +4,7 @@ from textual.widgets import Footer, Header, TabbedContent, TabPane
 from textual.containers import Container
 
 from models import Project
+from .component.message import TerminalCommandRequested
 
 from .composer import ComposerContainer, ComposerCommandRequested
 from .docker import DockerContainer
@@ -48,7 +49,7 @@ class MainApp(App[None]):
         self.query_one(Sidebar).toggle_class("-hidden")
 
     @on(ComposerCommandRequested)
-    def action_composer_script(self, event: ComposerCommandRequested):
+    def action_composer_script(self, event: ComposerCommandRequested) -> None:
         def refresh_composer(result: bool | None):
             if event.refresh_composer_on_success and result:
                 self.query_one(ComposerContainer).action_refresh()
@@ -63,4 +64,14 @@ class MainApp(App[None]):
                 allow_rerun=event.allow_rerun,
             ),
             refresh_composer,
+        )
+
+    @on(TerminalCommandRequested)
+    def action_terminal_command(self, event: TerminalCommandRequested) -> None:
+        self.query_one(Sidebar).add_class("-hidden")
+        self.app.push_screen(
+            TerminalModal(
+                command=event.command,
+                allow_rerun=event.allow_rerun,
+            )
         )

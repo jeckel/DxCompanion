@@ -5,6 +5,7 @@ from textual.widgets.option_list import Option, Separator
 
 
 from models import Project
+from presentation.component.action_option_list import ActionOptionList
 from presentation.composer.composer_script_option_list import ComposerScriptOptionList
 from service_locator import ServiceContainer
 
@@ -33,5 +34,11 @@ class Sidebar(Container):
 
         if len(ServiceContainer.composer_client().scripts(self.project)) > 0:
             yield ComposerScriptOptionList(self.project)
-
-        yield OptionList(*(Option(action.label) for action in self.project.actions))
+        if self.project.actions is None:
+            return
+        for action_group, actions in self.project.actions.items():
+            if len(actions) > 0:
+                yield ActionOptionList(
+                    project=self.project, actions=actions, group_name=action_group
+                )
+                # yield ActionOptionList(project=self.project)

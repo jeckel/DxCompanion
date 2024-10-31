@@ -19,8 +19,7 @@ class Project(BaseModel):
     composer: Optional[bool] = Field(default=False)
     composer_cmd: list[str] = ["composer"]
     docker_composer_cmd: list[str] = ["docker", "compose"]
-    actions: list[ProjectAction] = []
-    # actions: dict[str, str] = {}
+    actions: Optional[dict[str, list[ProjectAction]]] = None
 
     @classmethod
     def from_json(cls, json_path: str):
