@@ -15,6 +15,9 @@ from .composer_script_button import ComposerScriptButton
 
 
 class ComposerContainer(Container):
+    BINDINGS = [
+        ("ctrl+r", "refresh", "Refresh"),
+    ]
     DEFAULT_CSS = """
         ComposerContainer {
             Container {
@@ -46,9 +49,12 @@ class ComposerContainer(Container):
             )
         yield Horizontal(id="composer-actions")
 
-    async def on_mount(self):
+    def action_refresh(self) -> None:
         self.loading = True
         self._load_composer()
+
+    async def on_mount(self):
+        self.action_refresh()
 
     @work(exclusive=True, thread=True)
     async def _load_composer(self) -> dict[str, str]:
@@ -91,6 +97,8 @@ class ComposerContainer(Container):
             # self.log(f"Bouton {script}")
             new_button = ComposerScriptButton(script_name=script)
             await scripts.mount(new_button)
+        await scripts.mount(Label(" "))
+        await scripts.mount(Button.success('Refresh'))
 
         self.loading = False
 
