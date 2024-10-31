@@ -1,7 +1,8 @@
 from rich.text import Text
 from textual.widgets import DataTable
 from textual import on
-from textual.message import Message
+
+from .composer_message import ComposerCommandRequested
 
 
 class ComposerPackagesTable(DataTable):
@@ -57,13 +58,10 @@ class ComposerPackagesTable(DataTable):
     @on(DataTable.CellSelected)
     def on_update_package_clicked(self, event: DataTable.CellSelected) -> None:
         if event.value == self.update_button:
-            self.post_message(self.UpdatePackageClicked(event.cell_key.row_key.value))
-
-    class UpdatePackageClicked(Message):
-        """
-        Message sent when a package is selected for update
-        """
-
-        def __init__(self, package: str) -> None:
-            self.package = package
-            super().__init__()
+            self.post_message(
+                ComposerCommandRequested(
+                    script=["update", event.cell_key.row_key.value],
+                    allow_rerun=False,
+                    refresh_composer_on_success=True,
+                )
+            )

@@ -20,3 +20,14 @@ DockerContainer {
         border: $primary-background round;
     }
 }
+
+OptionList {
+    margin: 1 0;
+    background: $background;
+    border-title-color: $primary;
+    border: $primary-background round;
+}
+
+.ml-1 {
+  margin-left: 1;
+}

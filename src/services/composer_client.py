@@ -40,3 +40,9 @@ class ComposerClient(BaseService):
         if not project.composer:
             return None
         return Composer.from_json(project.path)
+
+    def scripts(self, project: Project) -> list[str]:
+        composer = self.composer_json(project)
+        if composer is None:
+            return []
+        return composer.manual_scripts

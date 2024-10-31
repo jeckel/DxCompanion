@@ -5,6 +5,8 @@ from textual.widgets.option_list import Option, Separator
 
 
 from models import Project
+from presentation.composer.composer_script_option_list import ComposerScriptOptionList
+from service_locator import ServiceContainer
 
 
 class Sidebar(Container):
@@ -13,14 +15,10 @@ class Sidebar(Container):
         width: 30;
         height: 100%;
         dock: left;
-        background: $primary-background;
+        background: $background;
         layer: sidebar;
-        OptionList {
-            margin: 1 0;
-            border: none;
-        }
     }
-    
+
     Sidebar.-hidden {
         display: none;
     }
@@ -32,27 +30,8 @@ class Sidebar(Container):
         self.add_class("-hidden")
 
     def compose(self) -> ComposeResult:
-        yield OptionList(
-            *(Option(action.label) for action in self.project.actions)
-        )
-        # yield OptionList(
-        #     Option("Aerilon", id="aer"),
-        #     Option("Aquaria", id="aqu"),
-        #     Separator(),
-        #     Option("Canceron", id="can"),
-        #     Option("Caprica", id="cap", disabled=True),
-        #     Separator(),
-        #     Option("Gemenon", id="gem"),
-        #     Separator(),
-        #     Option("Leonis", id="leo"),
-        #     Option("Libran", id="lib"),
-        #     Separator(),
-        #     Option("Picon", id="pic"),
-        #     Separator(),
-        #     Option("Sagittaron", id="sag"),
-        #     Option("Scorpia", id="sco"),
-        #     Separator(),
-        #     Option("Tauron", id="tau"),
-        #     Separator(),
-        #     Option("Virgon", id="vir"),
-        # )
+
+        if len(ServiceContainer.composer_client().scripts(self.project)) > 0:
+            yield ComposerScriptOptionList(self.project)
+
+        yield OptionList(*(Option(action.label) for action in self.project.actions))

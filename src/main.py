@@ -1,7 +1,7 @@
 import typer
 from dependency_injector import providers
 
-from service_locator import Container
+from service_locator import ServiceContainer
 from models import Project
 from presentation import MainApp
 
@@ -11,7 +11,7 @@ app = typer.Typer()
 @app.command()
 def tui(project_path: str) -> None:
     project = Project.from_json(json_path=project_path)
-    Container()
+    ServiceContainer()
     tui_app = MainApp(project)
     tui_app.run()
 

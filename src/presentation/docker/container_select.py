@@ -1,6 +1,6 @@
 from textual.widgets import Select
 
-from service_locator import Container
+from service_locator import ServiceContainer
 
 
 class ContainerSelect(Select):
@@ -8,7 +8,7 @@ class ContainerSelect(Select):
         super().__init__(
             (
                 (docker_container.name, docker_container.id)
-                for docker_container in Container.docker_client().get_running_containers()
+                for docker_container in ServiceContainer.docker_client().get_running_containers()
             ),
             **kargs
         )

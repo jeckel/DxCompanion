@@ -1,14 +1,12 @@
-from click import command
 from textual import on, work
 from textual.app import ComposeResult
 from textual.containers import Container, Horizontal
-from textual.widgets import Button, TabPane, Label
+from textual.widgets import Button
 from textual.worker import Worker, WorkerState
 
 from models import Project
 from models.composer import Composer
-from presentation.component import TerminalModal, NonShellCommand
-from service_locator import Container as ServiceContainer
+from service_locator import ServiceContainer
 
 from .composer_packages_table import ComposerPackagesTable
 from .composer_script_button import ComposerScriptButton
@@ -47,7 +45,16 @@ class ComposerContainer(Container):
             yield ComposerPackagesTable(
                 title="Composer packages-dev", id="composer-packages-dev-table"
             )
-        yield Horizontal(id="composer-actions")
+        with Horizontal(id="composer-actions"):
+            yield ComposerScriptButton(
+                script="install", label="Install", classes="ml-1"
+            )
+            yield ComposerScriptButton(
+                script="update", label="Update all", refresh_composer_on_success=True
+            )
+            yield Button.success(
+                "Refresh", id="composer-refresh-button", classes="ml-1"
+            )
 
     def action_refresh(self) -> None:
         self.loading = True
@@ -83,53 +90,8 @@ class ComposerContainer(Container):
             composer.locked_packages_dev,
             packages_updatable,
         )
-
-        scripts = self.query_one("#composer-actions")
-        await scripts.remove_children()
-
-        await scripts.mount(ComposerScriptButton(script_name="install"))
-        await scripts.mount(
-            ComposerScriptButton(script_name="update", label="update all")
-        )
-        await scripts.mount(Label(" "))
-
-        for script in self.composer.manual_scripts:
-            # self.log(f"Bouton {script}")
-            new_button = ComposerScriptButton(script_name=script)
-            await scripts.mount(new_button)
-        await scripts.mount(Label(" "))
-        await scripts.mount(Button.success('Refresh'))
-
         self.loading = False
 
-    @on(ComposerScriptButton.Pressed)
-    def on_pressed(self, event: Button.Pressed) -> None:
-        if isinstance(event.button, ComposerScriptButton):
-            self.app.push_screen(
-                TerminalModal(
-                    command=NonShellCommand(
-                        path=self.project.path,
-                        command=["composer", "--no-ansi", event.button.script_name],
-                    ),
-                    allow_rerun=True,
-                )
-            )
-
-    @on(ComposerPackagesTable.UpdatePackageClicked)
-    def on_update_package_clicked(
-        self, event: ComposerPackagesTable.UpdatePackageClicked
-    ) -> None:
-        self.app.push_screen(
-            TerminalModal(
-                command=NonShellCommand(
-                    self.project.path,
-                    ["composer", "--no-ansi", "update", event.package],
-                )
-            ),
-            self.terminal_modal_callback,
-        )
-
-    def terminal_modal_callback(self, result: bool) -> None:
-        if result:
-            self.loading = True
-            self._load_composer()
+    @on(Button.Pressed, "#composer-refresh-button")
+    def on_refresh_pressed(self):
+        self.action_refresh()

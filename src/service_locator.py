@@ -4,7 +4,7 @@ from models import Project
 from services import DockerClient, ComposerClient
 
 
-class Container(containers.DeclarativeContainer):
+class ServiceContainer(containers.DeclarativeContainer):
     config = providers.Configuration()
     docker_client = providers.Singleton(DockerClient)
     composer_client = providers.Singleton(ComposerClient)

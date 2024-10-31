@@ -1,14 +1,14 @@
+from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header, TabbedContent, TabPane
 from textual.containers import Container
 
 from models import Project
 
-from .composer import ComposerContainer
+from .composer import ComposerContainer, ComposerCommandRequested
 from .docker import DockerContainer
 from .summary import ProjectSummaryContainer
-from .component import Sidebar
-
+from .component import Sidebar, TerminalModal, NonShellCommand
 
 
 class MainApp(App[None]):
@@ -46,3 +46,21 @@ class MainApp(App[None]):
 
     def action_toggle_sidebar(self) -> None:
         self.query_one(Sidebar).toggle_class("-hidden")
+
+    @on(ComposerCommandRequested)
+    def action_composer_script(self, event: ComposerCommandRequested):
+        def refresh_composer(result: bool | None):
+            if event.refresh_composer_on_success and result:
+                self.query_one(ComposerContainer).action_refresh()
+
+        self.query_one(Sidebar).add_class("-hidden")
+        self.app.push_screen(
+            TerminalModal(
+                command=NonShellCommand(
+                    path=self._project.path,
+                    command=event.command,
+                ),
+                allow_rerun=event.allow_rerun,
+            ),
+            refresh_composer,
+        )

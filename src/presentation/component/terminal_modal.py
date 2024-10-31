@@ -45,10 +45,8 @@ class TerminalModal(ModalScreen[bool]):
     ):
         super().__init__(**kwargs)
         self.command = command
-        # self.path = path
         self.modal_title = f"Running: {self.command}"
         self.allow_rerun = allow_rerun
-        # self.shell = shell
         self.terminal = Terminal(
             id="terminal_command",
             classes="modal_container",
@@ -78,6 +76,7 @@ class TerminalModal(ModalScreen[bool]):
 
     @on(Terminal.TerminalCompleted)
     def on_terminal_completed(self, event: Terminal.TerminalCompleted) -> None:
+        self._result = event.success
         self.query_one("#modal_button_container").loading = False
 
     @on(Terminal.TerminalStarted)
