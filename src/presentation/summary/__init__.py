@@ -2,6 +2,7 @@ from textual.containers import Container
 from textual.widgets import Markdown
 
 from models import Project
+from .composer_card import ComposerCard
 
 
 # service: Service = Provide[Container.service]
@@ -28,3 +29,4 @@ class ProjectSummaryContainer(Container):
 # Project : {self._project.project_name}
 """
         )
+        yield ComposerCard(project=self._project)

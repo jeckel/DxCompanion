@@ -38,8 +38,6 @@ class MainApp(App[None]):
         with TabbedContent(initial="summary-pan"):
             with TabPane(title="Summary", id="summary-pan"):
                 yield ProjectSummaryContainer(project=self._project)
-            with TabPane(title="Composer", id="composer-pan"):
-                yield ComposerContainer(project=self._project)
             with TabPane(title="Docker", id="docker-pan"):
                 yield DockerContainer(project=self._project)
         yield Footer()
