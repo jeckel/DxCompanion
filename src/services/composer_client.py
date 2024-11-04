@@ -1,15 +1,24 @@
+from __future__ import annotations
 import subprocess
 
 from models import Project
+from models.app_context import AppContext
 from models.composer import Composer
 from .base_service import BaseService
 
 
 class ComposerClient(BaseService):
-    @staticmethod
-    def updatable_packages(project: Project) -> dict[str, str]:
+    def __init__(self, context: AppContext):
+        self._context = context
+
+    def updatable_packages(self) -> dict[str, str]:
+        project = self._context.current_project
+
+        if self._context.composer_updatable_packages is not None:
+            return self._context.composer_updatable_packages
+
         with subprocess.Popen(
-            ["composer", "update", "--dry-run"],
+            ["composer", "update", "--dry-run", "--no-ansi"],
             cwd=project.path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -22,21 +31,19 @@ class ComposerClient(BaseService):
             # Processing lines for packages
             for line in lines:
                 if line.startswith("  - Upgrading"):
-                    # Extract package name and target version
                     parts = line.split("(")
-                    package_name = line.strip().split(" ")[2]  # Get the package name
-                    version_info = (
-                        parts[1].strip().rstrip(")")
-                    )  # Get the version info (v2.2.9 => v2.3.0)
-                    target_version = version_info.split("=>")[
-                        -1
-                    ].strip()  # Get the target version
-
-                    # Append to the packages list as a dictionary
+                    package_name = line.strip().split(" ")[2]
+                    version_info = parts[1].strip().rstrip(")")
+                    target_version = version_info.split("=>")[-1].strip()
                     packages[package_name] = target_version
-            return packages
+            self._context.composer_updatable_packages = packages
+        return self._context.composer_updatable_packages
 
-    def composer_json(self, project: Project) -> None | Composer:
+    def reset_updatable_packages(self) -> None:
+        self._context.composer_updatable_packages = None
+
+    @staticmethod
+    def composer_json(project: Project) -> None | Composer:
         if not project.composer:
             return None
         return Composer.from_json(project.path)

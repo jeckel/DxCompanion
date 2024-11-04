@@ -1,20 +1,20 @@
 from textual import on
-from textual.app import App, ComposeResult
-from textual.widgets import Footer, Header, TabbedContent, TabPane
-from textual.containers import Container
+from textual.app import App
+from textual.css.query import NoMatches
 
 from models import Project
+from service_locator import ServiceContainer
 from .component.message import TerminalCommandRequested
 
-from .composer import ComposerContainer, ComposerCommandRequested
+from .composer import ComposerCommandRequested
+from .composer.composer_screen import ComposerScreen
 from .docker import DockerContainer
 from .summary import ProjectSummaryContainer
 from .component import Sidebar, TerminalModal, NonShellCommand
+from .summary.summary_screen import SummaryScreen
 
 
 class MainApp(App[None]):
-    """A Textual app to manage stopwatches."""
-
     TITLE = "DX Companion"
     BINDINGS = [
         ("d", "toggle_dark", "Toggle dark mode"),
@@ -26,33 +26,29 @@ class MainApp(App[None]):
     }
     """
     CSS_PATH = "../tcss/layout.tcss"
+    SCREENS = {"summary": SummaryScreen, "composer": ComposerScreen}
+
     _project: Project
 
-    def __init__(self, project: Project):
-        self._project = project
+    def __init__(self):
         super().__init__()
-        self.title = f"DX Companion - {project.name}"
+        self._project = ServiceContainer.context().current_project
+        self.title = f"DX Companion - {self._project.name}"
 
-    def compose(self) -> ComposeResult:
-        yield Sidebar(project=self._project, classes="-hidden")
-        yield Header()
-        with TabbedContent(initial="summary-pan"):
-            with TabPane(title="Summary", id="summary-pan"):
-                yield ProjectSummaryContainer(project=self._project)
-            with TabPane(title="Composer", id="composer-pan"):
-                yield ComposerContainer(project=self._project)
-            with TabPane(title="Docker", id="docker-pan"):
-                yield DockerContainer(project=self._project)
-        yield Footer()
+    def on_mount(self) -> None:
+        self.push_screen("summary")
 
     def action_toggle_sidebar(self) -> None:
-        self.query_one(Sidebar).toggle_class("-hidden")
+        try:
+            self.query_one(Sidebar).toggle_class("-hidden")
+        except NoMatches:
+            pass
 
     @on(ComposerCommandRequested)
     def action_composer_script(self, event: ComposerCommandRequested) -> None:
         def refresh_composer(result: bool | None):
             if event.refresh_composer_on_success and result:
-                self.query_one(ComposerContainer).action_refresh()
+                ServiceContainer.composer_client().reset_updatable_packages()
 
         self.query_one(Sidebar).add_class("-hidden")
         self.app.push_screen(
