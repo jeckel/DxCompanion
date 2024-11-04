@@ -8,7 +8,6 @@ from textual.containers import Container
 from textual.widgets import Static, Button
 from textual.worker import Worker, WorkerState
 
-from models import Project
 from models.composer import Composer
 from presentation.composer.composer_screen import ComposerScreen
 from service_locator import ServiceContainer
@@ -33,9 +32,9 @@ class ComposerCard(Container):
     _composer_config: Optional[Composer] = None
     _packages_updatable: dict[str, str] = {}
 
-    def __init__(self, project: Project, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._project = project
+        self._project = ServiceContainer.context().current_project
         self._composer_panel = Static(id="composer_panel")
 
     def compose(self) -> ComposeResult:

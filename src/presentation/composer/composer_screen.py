@@ -13,9 +13,6 @@ class ComposerScreen(Screen):
         ("escape", "return", "Return to project"),
     }
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     def compose(self) -> ComposeResult:
         yield Sidebar(classes="-hidden")
         yield Header()
@@ -23,7 +20,7 @@ class ComposerScreen(Screen):
         yield Footer()
 
     def action_return(self):
-        self.dismiss()
+        self.app.switch_screen("summary")
 
     @on(ScreenResume)
     def screen_resume(self):

@@ -65,7 +65,7 @@ class ComposerContainer(Container):
         return ServiceContainer.composer_client().updatable_packages()
 
     @on(Worker.StateChanged)
-    async def refresh_listview(self, event: Worker.StateChanged) -> None:
+    async def refresh_packages(self, event: Worker.StateChanged) -> None:
         """Called when the worker state changes."""
         if event.state != WorkerState.SUCCESS:
             return
