@@ -2,6 +2,7 @@ import json
 import os
 from functools import cached_property
 from typing import Optional
+from uuid import uuid4, UUID
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -14,6 +15,7 @@ class ProjectAction(BaseModel):
 
 
 class Project(BaseModel):
+    id_: UUID = Field(default_factory=uuid4)
     path: str
     project_name: Optional[str] = None
     composer: Optional[bool] = Field(default=False)

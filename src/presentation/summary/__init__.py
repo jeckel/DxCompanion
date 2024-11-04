@@ -19,12 +19,12 @@ class ProjectSummaryContainer(Container):
     """
 
     def __init__(self, project: Project, **kwargs):
-        self.project = project
+        self._project = project
         super().__init__(**kwargs)
 
     def compose(self):
         yield Markdown(
             f"""
-# Project : {self.project.project_name}
+# Project : {self._project.project_name}
 """
         )

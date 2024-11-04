@@ -55,14 +55,17 @@ class ComposerContainer(Container):
 
     def action_refresh(self) -> None:
         self.loading = True
-        self._load_composer()
+        self._load_composer(no_cache=True)
 
     async def on_mount(self):
-        self.action_refresh()
+        self.loading = True
+        self._load_composer()
 
     @work(exclusive=True, thread=True)
-    async def _load_composer(self) -> dict[str, str]:
-        return ServiceContainer.composer_client().updatable_packages(self.project)
+    async def _load_composer(self, no_cache: bool = False) -> dict[str, str]:
+        return ServiceContainer.composer_client().updatable_packages(
+            self.project, no_cache
+        )
 
     @on(Worker.StateChanged)
     async def refresh_listview(self, event: Worker.StateChanged) -> None:

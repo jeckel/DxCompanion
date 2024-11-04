@@ -1,7 +1,6 @@
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header, TabbedContent, TabPane
-from textual.containers import Container
 
 from models import Project
 from .component.message import TerminalCommandRequested
