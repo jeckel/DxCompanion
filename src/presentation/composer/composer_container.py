@@ -4,7 +4,6 @@ from textual.containers import Container, Horizontal
 from textual.widgets import Button
 from textual.worker import Worker, WorkerState
 
-from models import Project
 from models.composer import Composer
 from service_locator import ServiceContainer
 
@@ -29,9 +28,9 @@ class ComposerContainer(Container):
         }
     """
 
-    def __init__(self, project: Project, **kwargs):
-        self.project = project
-        self.composer = Composer.from_json(project.path)
+    def __init__(self, **kwargs):
+        self._project = ServiceContainer.context().current_project
+        self.composer = Composer.from_json(self._project.path)
         super().__init__(**kwargs)
 
     def compose(self) -> ComposeResult:
@@ -55,17 +54,15 @@ class ComposerContainer(Container):
 
     def action_refresh(self) -> None:
         self.loading = True
-        self._load_composer(no_cache=True)
+        self._load_composer()
 
     async def on_mount(self):
         self.loading = True
         self._load_composer()
 
     @work(exclusive=True, thread=True)
-    async def _load_composer(self, no_cache: bool = False) -> dict[str, str]:
-        return ServiceContainer.composer_client().updatable_packages(
-            self.project, no_cache
-        )
+    async def _load_composer(self) -> dict[str, str]:
+        return ServiceContainer.composer_client().updatable_packages()
 
     @on(Worker.StateChanged)
     async def refresh_listview(self, event: Worker.StateChanged) -> None:
@@ -73,7 +70,7 @@ class ComposerContainer(Container):
         if event.state != WorkerState.SUCCESS:
             return
         packages_updatable = event.worker.result
-        composer = ServiceContainer.composer_client().composer_json(self.project)
+        composer = ServiceContainer.composer_client().composer_json(self._project)
         package_table: ComposerPackagesTable = self.query_one(
             "#composer-packages-table"
         )

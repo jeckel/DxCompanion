@@ -1,19 +1,21 @@
+from __future__ import annotations
 import subprocess
-from uuid import UUID
 
 from models import Project
+from models.app_context import AppContext
 from models.composer import Composer
 from .base_service import BaseService
 
 
 class ComposerClient(BaseService):
-    _updatable_packages: dict[UUID, dict[str, str]] = {}
+    def __init__(self, context: AppContext):
+        self._context = context
 
-    def updatable_packages(
-        self, project: Project, no_cache: bool = False
-    ) -> dict[str, str]:
-        if project.id_ in self._updatable_packages is not None and not no_cache:
-            return self._updatable_packages[project.id_]
+    def updatable_packages(self) -> dict[str, str]:
+        project = self._context.current_project
+
+        if self._context.composer_updatable_packages is not None:
+            return self._context.composer_updatable_packages
 
         with subprocess.Popen(
             ["composer", "update", "--dry-run", "--no-ansi"],
@@ -34,8 +36,11 @@ class ComposerClient(BaseService):
                     version_info = parts[1].strip().rstrip(")")
                     target_version = version_info.split("=>")[-1].strip()
                     packages[package_name] = target_version
-            self._updatable_packages[project.id_] = packages
-        return self._updatable_packages[project.id_]
+            self._context.composer_updatable_packages = packages
+        return self._context.composer_updatable_packages
+
+    def reset_updatable_packages(self) -> None:
+        self._context.composer_updatable_packages = None
 
     @staticmethod
     def composer_json(project: Project) -> None | Composer:

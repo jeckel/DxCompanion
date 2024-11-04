@@ -98,9 +98,7 @@ class ComposerCard(Container):
 
     @work(exclusive=True, thread=True)
     async def _load_composer(self, no_cache: bool = False) -> dict[str, str]:
-        return ServiceContainer.composer_client().updatable_packages(
-            self._project, no_cache
-        )
+        return ServiceContainer.composer_client().updatable_packages()
 
     @on(Worker.StateChanged)
     async def refresh_listview(self, event: Worker.StateChanged) -> None:
@@ -112,4 +110,4 @@ class ComposerCard(Container):
 
     @on(Button.Pressed, "#toggle_composer_tab")
     def on_composer_manage(self):
-        self.app.push_screen(ComposerScreen(self._project))
+        self.app.push_screen(ComposerScreen())

@@ -3,9 +3,10 @@ from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header, TabbedContent, TabPane
 
 from models import Project
+from service_locator import ServiceContainer
 from .component.message import TerminalCommandRequested
 
-from .composer import ComposerContainer, ComposerCommandRequested
+from .composer import ComposerCommandRequested
 from .docker import DockerContainer
 from .summary import ProjectSummaryContainer
 from .component import Sidebar, TerminalModal, NonShellCommand
@@ -27,13 +28,13 @@ class MainApp(App[None]):
     CSS_PATH = "../tcss/layout.tcss"
     _project: Project
 
-    def __init__(self, project: Project):
-        self._project = project
+    def __init__(self):
+        self._project = ServiceContainer.context().current_project
         super().__init__()
-        self.title = f"DX Companion - {project.name}"
+        self.title = f"DX Companion - {self._project.name}"
 
     def compose(self) -> ComposeResult:
-        yield Sidebar(project=self._project, classes="-hidden")
+        yield Sidebar(classes="-hidden")
         yield Header()
         with TabbedContent(initial="summary-pan"):
             with TabPane(title="Summary", id="summary-pan"):
@@ -49,7 +50,7 @@ class MainApp(App[None]):
     def action_composer_script(self, event: ComposerCommandRequested) -> None:
         def refresh_composer(result: bool | None):
             if event.refresh_composer_on_success and result:
-                self.query_one(ComposerContainer).action_refresh()
+                ServiceContainer.composer_client().reset_updatable_packages()
 
         self.query_one(Sidebar).add_class("-hidden")
         self.app.push_screen(
