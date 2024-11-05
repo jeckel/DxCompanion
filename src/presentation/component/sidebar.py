@@ -3,7 +3,7 @@ from textual.containers import Container
 
 from presentation.component.action_option_list import ActionOptionList
 from presentation.composer.composer_script_option_list import ComposerScriptOptionList
-from service_locator import ServiceContainer
+from service_locator import ServiceLocator
 
 
 class Sidebar(Container):
@@ -22,13 +22,13 @@ class Sidebar(Container):
     """
 
     def __init__(self, **kwargs):
-        self._project = ServiceContainer.context().current_project
+        self._project = ServiceLocator.context().current_project
         super().__init__(**kwargs)
         self.add_class("-hidden")
 
     def compose(self) -> ComposeResult:
 
-        if len(ServiceContainer.composer_client().scripts(self._project)) > 0:
+        if len(ServiceLocator.composer_client().scripts(self._project)) > 0:
             yield ComposerScriptOptionList(self._project)
         if self._project.actions is None:
             return

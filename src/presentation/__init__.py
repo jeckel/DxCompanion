@@ -3,7 +3,7 @@ from textual.app import App
 from textual.css.query import NoMatches
 
 from models import Project
-from service_locator import ServiceContainer
+from service_locator import ServiceLocator
 from .component.message import TerminalCommandRequested
 
 from .composer import ComposerCommandRequested
@@ -32,7 +32,7 @@ class MainApp(App[None]):
 
     def __init__(self):
         super().__init__()
-        self._project = ServiceContainer.context().current_project
+        self._project = ServiceLocator.context().current_project
         self.title = f"DX Companion - {self._project.name}"
 
     def on_mount(self) -> None:
@@ -48,7 +48,7 @@ class MainApp(App[None]):
     def action_composer_script(self, event: ComposerCommandRequested) -> None:
         def refresh_composer(result: bool | None):
             if event.refresh_composer_on_success and result:
-                ServiceContainer.composer_client().reset_updatable_packages()
+                ServiceLocator.composer_client().reset_updatable_packages()
 
         self.query_one(Sidebar).add_class("-hidden")
         self.app.push_screen(

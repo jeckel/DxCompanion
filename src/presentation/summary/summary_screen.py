@@ -6,7 +6,7 @@ from textual.widgets import Header, Footer, TabbedContent, TabPane
 
 from presentation import Sidebar, DockerContainer
 from .summary_container import ProjectSummaryContainer
-from service_locator import ServiceContainer
+from service_locator import ServiceLocator
 
 
 class SummaryScreen(Screen):
@@ -26,7 +26,7 @@ class SummaryScreen(Screen):
                 yield ProjectSummaryContainer()
             with TabPane(title="Docker", id="docker-pan"):
                 yield DockerContainer(
-                    project=ServiceContainer.context().current_project
+                    project=ServiceLocator.context().current_project
                 )
         yield Footer()
 

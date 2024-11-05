@@ -10,7 +10,7 @@ from textual.worker import Worker, WorkerState
 
 from models.composer import Composer
 from presentation.composer.composer_screen import ComposerScreen
-from service_locator import ServiceContainer
+from service_locator import ServiceLocator
 
 
 class ComposerCard(Container):
@@ -34,7 +34,7 @@ class ComposerCard(Container):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._project = ServiceContainer.context().current_project
+        self._project = ServiceLocator.context().current_project
         self._composer_panel = Static(id="composer_panel")
 
     def compose(self) -> ComposeResult:
@@ -42,7 +42,7 @@ class ComposerCard(Container):
         yield Button("[underline]Manage packages", id="toggle_composer_tab")
 
     def on_mount(self) -> None:
-        self._composer_config = ServiceContainer.composer_client().composer_json(
+        self._composer_config = ServiceLocator.composer_client().composer_json(
             self._project
         )
         self._composer_panel.update(self.get_composer_panel())
@@ -97,7 +97,7 @@ class ComposerCard(Container):
 
     @work(exclusive=True, thread=True)
     async def _load_composer(self, no_cache: bool = False) -> dict[str, str]:
-        return ServiceContainer.composer_client().updatable_packages()
+        return ServiceLocator.composer_client().updatable_packages()
 
     @on(Worker.StateChanged)
     async def refresh_listview(self, event: Worker.StateChanged) -> None:

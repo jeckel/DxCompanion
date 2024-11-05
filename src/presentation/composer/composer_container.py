@@ -5,7 +5,7 @@ from textual.widgets import Button
 from textual.worker import Worker, WorkerState
 
 from models.composer import Composer
-from service_locator import ServiceContainer
+from service_locator import ServiceLocator
 
 from .composer_packages_table import ComposerPackagesTable
 from .composer_script_button import ComposerScriptButton
@@ -29,7 +29,7 @@ class ComposerContainer(Container):
     """
 
     def __init__(self, **kwargs):
-        self._project = ServiceContainer.context().current_project
+        self._project = ServiceLocator.context().current_project
         self.composer = Composer.from_json(self._project.path)
         super().__init__(**kwargs)
 
@@ -62,7 +62,7 @@ class ComposerContainer(Container):
 
     @work(exclusive=True, thread=True)
     async def _load_composer(self) -> dict[str, str]:
-        return ServiceContainer.composer_client().updatable_packages()
+        return ServiceLocator.composer_client().updatable_packages()
 
     @on(Worker.StateChanged)
     async def refresh_packages(self, event: Worker.StateChanged) -> None:
@@ -70,7 +70,7 @@ class ComposerContainer(Container):
         if event.state != WorkerState.SUCCESS:
             return
         packages_updatable = event.worker.result
-        composer = ServiceContainer.composer_client().composer_json(self._project)
+        composer = ServiceLocator.composer_client().composer_json(self._project)
         package_table: ComposerPackagesTable = self.query_one(
             "#composer-packages-table"
         )

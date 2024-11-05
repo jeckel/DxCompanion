@@ -3,7 +3,7 @@ from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
 from models import Project
-from service_locator import ServiceContainer
+from service_locator import ServiceLocator
 from .composer_message import ComposerCommandRequested
 
 
@@ -15,7 +15,7 @@ class ComposerScriptOptionList(OptionList):
         super().__init__(
             *(
                 Option(script)
-                for script in ServiceContainer.composer_client().scripts(self.project)
+                for script in ServiceLocator.composer_client().scripts(self.project)
             ),
             **kwargs
         )

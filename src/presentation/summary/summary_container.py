@@ -2,7 +2,8 @@ from textual.containers import Container
 from textual.widgets import Markdown
 
 from .composer_card import ComposerCard
-from service_locator import ServiceContainer
+from service_locator import ServiceLocator
+from .system_card import SystemCard
 
 
 class ProjectSummaryContainer(Container):
@@ -20,7 +21,7 @@ class ProjectSummaryContainer(Container):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._project = ServiceContainer.context().current_project
+        self._project = ServiceLocator.context().current_project
 
     def compose(self):
         yield Markdown(
@@ -29,6 +30,7 @@ class ProjectSummaryContainer(Container):
 """
         )
         yield ComposerCard()
+        yield SystemCard()
 
     def refresh_composer(self):
         self.query_one(ComposerCard).on_mount()
