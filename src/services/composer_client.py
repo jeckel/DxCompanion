@@ -18,7 +18,7 @@ class ComposerClient(BaseService):
             return self._context.composer_updatable_packages
 
         with subprocess.Popen(
-            ["composer", "update", "--dry-run", "--no-ansi"],
+            ["composer", "update", "--dry-run", "--no-ansi", "-n"],
             cwd=project.path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
