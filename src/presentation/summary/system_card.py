@@ -10,14 +10,13 @@ from service_locator import ServiceLocator
 class SystemCard(Container):
     DEFAULT_CSS = """
     SystemCard {
-        height: auto;
         width: 45;
-        border: $primary-background round;
     }
     """
+    BORDER_TITLE = "System versions"
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(**kwargs, classes="card")
         self._system_panel = Static(id="system_panel")
 
     def compose(self) -> ComposeResult:
@@ -27,8 +26,6 @@ class SystemCard(Container):
         table = Table(
             show_header=False,
             box=None,
-            title="System status",
-            title_style=Style(color="#bbc8e8", bold=True),
         )
         table.add_column()
         table.add_column(min_width=25, max_width=27)
@@ -39,6 +36,7 @@ class SystemCard(Container):
         self._add_system_row(table, "Castor", system_status.castor_version())
         self._add_system_row(table, "Docker", system_status.docker_version())
         self._add_system_row(table, "Ansible", system_status.ansible_version())
+        self._add_system_row(table, "Git", system_status.git_version())
 
         self._system_panel.update(table)
 

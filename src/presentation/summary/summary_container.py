@@ -3,6 +3,7 @@ from textual.widgets import Markdown
 
 from .composer_card import ComposerCard
 from service_locator import ServiceLocator
+from .docker_card import DockerCard
 from .system_card import SystemCard
 
 
@@ -31,6 +32,7 @@ class ProjectSummaryContainer(Container):
         )
         yield ComposerCard()
         yield SystemCard()
+        yield DockerCard()
 
     def refresh_composer(self):
         self.query_one(ComposerCard).on_mount()
