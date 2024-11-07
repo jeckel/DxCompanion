@@ -44,3 +44,7 @@ class SystemStatus(BaseService):
     def git_version(self) -> str|None:
         output = self._capture_output(['git', '--version'])
         return None if output is None else self._capture_version(output, position=2)
+
+    def circleci_version(self) -> str|None:
+        output = self._capture_output(['circleci', 'version'])
+        return None if output is None else self._capture_version(output, position=0).split('+')[0]

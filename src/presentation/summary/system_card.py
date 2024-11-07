@@ -32,11 +32,12 @@ class SystemCard(Container):
         system_status = ServiceLocator.system_status()
         self._add_system_row(table, "Php", system_status.php_version())
         self._add_system_row(table, "Composer", system_status.composer_version())
-        self._add_system_row(table, "Symfony-Cli", system_status.symfony_version())
+        self._add_system_row(table, "Symfony cli", system_status.symfony_version())
         self._add_system_row(table, "Castor", system_status.castor_version())
         self._add_system_row(table, "Docker", system_status.docker_version())
         self._add_system_row(table, "Ansible", system_status.ansible_version())
         self._add_system_row(table, "Git", system_status.git_version())
+        self._add_system_row(table, "CircleCI cli", system_status.circleci_version())
 
         self._system_panel.update(table)
 
