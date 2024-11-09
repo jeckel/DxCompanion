@@ -30,7 +30,7 @@ class SummaryScreen(Screen):
 
     @on(ScreenResume)
     def screen_resume(self):
-        self.query_one(ProjectSummaryContainer).refresh_composer()
+        self.query_one(ProjectSummaryContainer).refresh_packages()
 
     def action_toggle_composer_screen(self):
         self.app.switch_screen("composer")
