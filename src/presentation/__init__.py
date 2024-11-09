@@ -9,6 +9,7 @@ from .component.message import TerminalCommandRequested
 from .composer import ComposerCommandRequested
 from .composer.composer_screen import ComposerScreen
 from .docker import DockerContainer
+from .package_manager import PackageManagerScreen
 from .summary import ProjectSummaryContainer
 from .component import Sidebar, TerminalModal, NonShellCommand
 from .summary.summary_screen import SummaryScreen
@@ -26,7 +27,11 @@ class MainApp(App[None]):
     }
     """
     CSS_PATH = "../tcss/layout.tcss"
-    SCREENS = {"summary": SummaryScreen, "composer": ComposerScreen}
+    SCREENS = {
+        "summary": SummaryScreen,
+        "composer": ComposerScreen,
+        "packages": PackageManagerScreen,
+    }
 
     _project: Project
 
@@ -34,6 +39,10 @@ class MainApp(App[None]):
         super().__init__()
         self._project = ServiceLocator.context().current_project
         self.title = f"DX Companion - {self._project.name}"
+        if self._project.has_package_managers:
+            self.bind(
+                keys="ctrl+u", action="toggle_package_screen", description="Packages"
+            )
 
     def on_mount(self) -> None:
         self.push_screen("summary")
@@ -43,6 +52,9 @@ class MainApp(App[None]):
             self.query_one(Sidebar).toggle_class("-hidden")
         except NoMatches:
             pass
+
+    def action_toggle_package_screen(self) -> None:
+        self.switch_screen("packages")
 
     @on(ComposerCommandRequested)
     def action_composer_script(self, event: ComposerCommandRequested) -> None:

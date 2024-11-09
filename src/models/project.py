@@ -51,3 +51,7 @@ class Project(BaseModel):
         if os.path.exists(composer_file):
             self.composer = True
         return self
+
+    @property
+    def has_package_managers(self) -> bool:
+        return self.package_managers is not None and len(self.package_managers) > 0

@@ -6,7 +6,6 @@ from textual.worker import Worker, WorkerState
 from rich.style import Style
 from rich.table import Table
 
-from presentation import ComposerScreen
 from service_locator import ServiceLocator
 from services.package_manager.abstract_package_manager import Package
 
@@ -31,7 +30,7 @@ class PackageCard(Container):
 
     @on(Button.Pressed, "#toggle_package_screen")
     def on_composer_manage(self):
-        self.app.push_screen(ComposerScreen())
+        self.app.switch_screen("packages")
 
     def refresh_packages(self) -> None:
         """
