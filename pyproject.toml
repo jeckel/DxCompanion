@@ -16,4 +16,13 @@ dependencies = [
 dev-dependencies = [
     "pre-commit>=4.0.1",
     "textual-dev>=1.6.1",
+    "types-pyyaml>=6.0.12.20240917",
 ]
+[tool.mypy]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "yaml"
+]
+ignore_missing_imports = true

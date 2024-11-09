@@ -16,24 +16,16 @@ from service_locator import ServiceLocator
 class ComposerCard(Container):
     DEFAULT_CSS = """
     ComposerCard {
-        height: auto;
         width: 45;
-        border: $primary-background round;
-
-        Button, Button:focus, Button:hover {
-            height: 1;
-            border: none;
-            width: 100%;
-            margin-top: 1;
-        }
     }
     """
+    BORDER_TITLE = "Composer status"
 
-    _composer_config: Optional[Composer] = None
+    _composer: Optional[Composer] = None
     _packages_updatable: dict[str, str] = {}
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(**kwargs, classes="card")
         self._project = ServiceLocator.context().current_project
         self._composer_panel = Static(id="composer_panel")
 
@@ -42,9 +34,7 @@ class ComposerCard(Container):
         yield Button("[underline]Manage packages", id="toggle_composer_tab")
 
     def on_mount(self) -> None:
-        self._composer_config = ServiceLocator.composer_client().composer_json(
-            self._project
-        )
+        self._composer = ServiceLocator.composer_client().composer_json(self._project)
         self._composer_panel.update(self.get_composer_panel())
         self.query_one(Button).loading = True
         self._load_composer()
@@ -53,8 +43,8 @@ class ComposerCard(Container):
         table = Table(
             show_header=False,
             box=None,
-            title="Composer status",
-            title_style=Style(color="#bbc8e8", bold=True),
+            # title="Composer status",
+            # title_style=Style(color="#bbc8e8", bold=True),
         )
         table.add_column()
         table.add_column(min_width=25, max_width=27)
@@ -63,37 +53,43 @@ class ComposerCard(Container):
             "[green]Enabled" if self._project.composer else "[red]Disabled",
         )
 
-        if self._project.composer and self._composer_config is not None:
-            updatable_packages_keys = self._packages_updatable.keys()
-            updatable_packages = len(
-                set(updatable_packages_keys) & set(self._packages_updatable.keys())
+        if self._project.composer and self._composer is not None:
+            updatable_packages = self._count_updatable_packages(
+                self._composer.required_packages, self._packages_updatable
             )
             if updatable_packages > 0:
                 table.add_row(
                     "[label]Packages:",
-                    f"{len(self._composer_config.required_packages)} ([orange1]{updatable_packages} updates available[/orange1])",
+                    f"[blue]{len(self._composer.required_packages)}[/blue] "
+                    f"([orange1]{updatable_packages} updates available[/orange1])",
                 )
             else:
                 table.add_row(
                     "[label]Packages:",
-                    f"{len(self._composer_config.required_packages)}",
+                    f"[blue]{len(self._composer.required_packages)}",
                 )
 
-            updatable_packages_dev = len(
-                set(updatable_packages_keys) & set(self._packages_updatable.keys())
+            updatable_packages_dev = self._count_updatable_packages(
+                self._composer.required_packages_dev, self._packages_updatable
             )
             if updatable_packages_dev > 0:
                 table.add_row(
                     "[label]Packages-dev:",
-                    f"{len(self._composer_config.required_packages_dev)} "
+                    f"[blue]{len(self._composer.required_packages_dev)}[/blue] "
                     f"([orange1]{updatable_packages_dev} updates available[/orange1])",
                 )
             else:
                 table.add_row(
                     "[label]Packages-dev:",
-                    f"{len(self._composer_config.required_packages_dev)}",
+                    f"[blue]{len(self._composer.required_packages_dev)}",
                 )
             return table
+
+    @staticmethod
+    def _count_updatable_packages(
+        packages: dict[str, str], updatable_packages: dict[str, str]
+    ) -> int:
+        return len(set(packages.keys()) & set(updatable_packages.keys()))
 
     @work(exclusive=True, thread=True)
     async def _load_composer(self, no_cache: bool = False) -> dict[str, str]:

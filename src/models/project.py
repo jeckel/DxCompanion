@@ -22,6 +22,7 @@ class Project(BaseModel):
     composer_cmd: list[str] = ["composer"]
     docker_composer_cmd: list[str] = ["docker", "compose"]
     actions: Optional[dict[str, list[ProjectAction]]] = None
+    docker_compose_files: list[str] = ["docker-compose.yml"]
 
     @classmethod
     def from_json(cls, json_path: str):
@@ -46,9 +47,3 @@ class Project(BaseModel):
         if os.path.exists(composer_file):
             self.composer = True
         return self
-
-    # @cached_property
-    # def composer_json(self) -> Optional[Composer]:
-    #     if not self.composer:
-    #         return None
-    #     return Composer.from_json(self.path)

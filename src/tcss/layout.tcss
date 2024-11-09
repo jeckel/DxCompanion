@@ -31,3 +31,16 @@ OptionList {
 .ml-1 {
   margin-left: 1;
 }
+
+.card {
+      height: auto;
+      border: $primary-background round;
+      border-title-color: $accent;
+
+      Button, Button:focus, Button:hover {
+            height: 1;
+            border: none;
+            width: 100%;
+            margin-top: 1;
+      }
+}

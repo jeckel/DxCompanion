@@ -91,4 +91,5 @@ class ComposerContainer(Container):
 
     @on(Button.Pressed, "#composer-refresh-button")
     def on_refresh_pressed(self):
+        ServiceLocator.composer_client().reset_updatable_packages()
         self.action_refresh()

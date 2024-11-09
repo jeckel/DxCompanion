@@ -6,7 +6,7 @@ from services import DockerClient, ComposerClient, SystemStatus
 
 class ServiceLocator(containers.DeclarativeContainer):
     config = providers.Configuration()
-    docker_client = providers.Singleton(DockerClient)
     context = providers.Singleton(AppContext)
+    docker_client = providers.Singleton(DockerClient, context=context)
     composer_client = providers.Singleton(ComposerClient, context=context)
     system_status = providers.Singleton(SystemStatus)
