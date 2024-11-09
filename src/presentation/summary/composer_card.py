@@ -54,15 +54,14 @@ class ComposerCard(Container):
         )
 
         if self._project.composer and self._composer is not None:
-            updatable_packages_keys = self._packages_updatable.keys()
-            updatable_packages = len(
-                set(self._composer.required_packages.keys())
-                & set(updatable_packages_keys)
+            updatable_packages = self._count_updatable_packages(
+                self._composer.required_packages, self._packages_updatable
             )
             if updatable_packages > 0:
                 table.add_row(
                     "[label]Packages:",
-                    f"[blue]{len(self._composer.required_packages)}[/blue] ([orange1]{updatable_packages} updates available[/orange1])",
+                    f"[blue]{len(self._composer.required_packages)}[/blue] "
+                    f"([orange1]{updatable_packages} updates available[/orange1])",
                 )
             else:
                 table.add_row(
@@ -70,9 +69,8 @@ class ComposerCard(Container):
                     f"[blue]{len(self._composer.required_packages)}",
                 )
 
-            updatable_packages_dev = len(
-                set(self._composer.required_packages_dev.keys())
-                & set(updatable_packages_keys)
+            updatable_packages_dev = self._count_updatable_packages(
+                self._composer.required_packages_dev, self._packages_updatable
             )
             if updatable_packages_dev > 0:
                 table.add_row(
@@ -86,6 +84,12 @@ class ComposerCard(Container):
                     f"[blue]{len(self._composer.required_packages_dev)}",
                 )
             return table
+
+    @staticmethod
+    def _count_updatable_packages(
+        packages: dict[str, str], updatable_packages: dict[str, str]
+    ) -> int:
+        return len(set(packages.keys()) & set(updatable_packages.keys()))
 
     @work(exclusive=True, thread=True)
     async def _load_composer(self, no_cache: bool = False) -> dict[str, str]:

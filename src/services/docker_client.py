@@ -12,6 +12,7 @@ class ContainerStatus(Enum):
     NA = "n/a"
     RUNNING = "Running"
 
+
 class DockerClient(BaseService):
     def __init__(self, context: AppContext):
         self._client = docker.from_env()
@@ -40,19 +41,24 @@ class DockerClient(BaseService):
         running_containers = self.get_running_containers()
         for compose_file in project.docker_compose_files:
             file_path = os.path.join(project.path, compose_file)
-            with open(file_path, 'r') as file:
+            with open(file_path, "r") as file:
                 docker_compose = yaml.safe_load(file)
 
             services = docker_compose.get("services", {})
             for service_name, service_config in services.items():
-                container_name = service_config.get("container_name", f"{basename}-{service_name}")
+                container_name = service_config.get(
+                    "container_name", f"{basename}-{service_name}"
+                )
                 container_names[container_name] = ContainerStatus.NA.value
 
                 for running_container in running_containers:
                     if running_container.name.startswith(container_name):
                         status = running_container.status
                         if "Health" in running_container.attrs["State"]:
-                            status += f" ({running_container.attrs["State"]["Health"]["Status"]})"
+                            health = running_container.attrs["State"]["Health"][
+                                "Status"
+                            ]
+                            status += f" ({health})"
                         container_names[container_name] = status
                         break
 
