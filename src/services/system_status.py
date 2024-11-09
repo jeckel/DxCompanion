@@ -2,6 +2,7 @@ import subprocess
 
 from .base_service import BaseService
 
+
 class SystemStatus(BaseService):
     @staticmethod
     def _capture_output(command: list[str]) -> str | None:
@@ -17,34 +18,42 @@ class SystemStatus(BaseService):
         version = version_line.split()[position]
         return version
 
-    def php_version(self) -> str|None:
-        output = self._capture_output(['php', '-v'])
+    def php_version(self) -> str | None:
+        output = self._capture_output(["php", "-v"])
         return None if output is None else self._capture_version(output)
 
-    def composer_version(self) -> str|None:
-        output = self._capture_output(['composer', '--version'])
+    def composer_version(self) -> str | None:
+        output = self._capture_output(["composer", "--version"])
         return None if output is None else self._capture_version(output, position=2)
 
-    def castor_version(self) -> str|None:
-        output = self._capture_output(['castor', '--version'])
+    def castor_version(self) -> str | None:
+        output = self._capture_output(["castor", "--version"])
         return None if output is None else self._capture_version(output)[1:]
 
-    def symfony_version(self) -> str|None:
-        output = self._capture_output(['symfony', 'version', '--no-ansi'])
+    def symfony_version(self) -> str | None:
+        output = self._capture_output(["symfony", "version", "--no-ansi"])
         return None if output is None else self._capture_version(output, position=3)
 
-    def docker_version(self) -> str|None:
-        output = self._capture_output(['docker', '-v'])
-        return None if output is None else self._capture_version(output, position=2)[:-1]
+    def docker_version(self) -> str | None:
+        output = self._capture_output(["docker", "-v"])
+        return (
+            None if output is None else self._capture_version(output, position=2)[:-1]
+        )
 
-    def ansible_version(self) -> str|None:
-        output = self._capture_output(['ansible', '--version'])
-        return None if output is None else self._capture_version(output, position=2)[:-1]
+    def ansible_version(self) -> str | None:
+        output = self._capture_output(["ansible", "--version"])
+        return (
+            None if output is None else self._capture_version(output, position=2)[:-1]
+        )
 
-    def git_version(self) -> str|None:
-        output = self._capture_output(['git', '--version'])
+    def git_version(self) -> str | None:
+        output = self._capture_output(["git", "--version"])
         return None if output is None else self._capture_version(output, position=2)
 
-    def circleci_version(self) -> str|None:
-        output = self._capture_output(['circleci', 'version'])
-        return None if output is None else self._capture_version(output, position=0).split('+')[0]
+    def circleci_version(self) -> str | None:
+        output = self._capture_output(["circleci", "version"])
+        return (
+            None
+            if output is None
+            else self._capture_version(output, position=0).split("+")[0]
+        )

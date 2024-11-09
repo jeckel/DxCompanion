@@ -42,7 +42,7 @@ class SystemCard(Container):
         self._system_panel.update(table)
 
     @staticmethod
-    def _add_system_row(table: Table, label: str, version: str|None) -> None:
+    def _add_system_row(table: Table, label: str, version: str | None) -> None:
         table.add_row(
             f"[label]{label}:",
             f"[blue]{version}" if version is not None else "[orange1]N/A",

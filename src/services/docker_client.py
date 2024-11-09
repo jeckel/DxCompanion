@@ -1,6 +1,5 @@
 import os
 from enum import Enum
-from typing import Literal
 
 import docker
 import yaml
@@ -51,9 +50,10 @@ class DockerClient(BaseService):
 
                 for running_container in running_containers:
                     if running_container.name.startswith(container_name):
-                        container_names[container_name] = running_container.status
+                        status = running_container.status
                         if "Health" in running_container.attrs["State"]:
-                            container_names[container_name] += f" ({running_container.attrs["State"]["Health"]["Status"]})"
+                            status += f" ({running_container.attrs["State"]["Health"]["Status"]})"
+                        container_names[container_name] = status
                         break
 
         return container_names

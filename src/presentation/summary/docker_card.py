@@ -32,7 +32,10 @@ class DockerCard(Container):
         table.add_column()
         docker_client = ServiceLocator.docker_client()
         for container, status in docker_client.list_container_names().items():
-            table.add_row(f"[label]{container}", f"[{self._color_by_status(status)}]{status.capitalize()}")
+            table.add_row(
+                f"[label]{container}",
+                f"[{self._color_by_status(status)}]{status.capitalize()}",
+            )
         self._docker_panel.update(table)
 
     @staticmethod

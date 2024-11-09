@@ -34,9 +34,7 @@ class ComposerCard(Container):
         yield Button("[underline]Manage packages", id="toggle_composer_tab")
 
     def on_mount(self) -> None:
-        self._composer = ServiceLocator.composer_client().composer_json(
-            self._project
-        )
+        self._composer = ServiceLocator.composer_client().composer_json(self._project)
         self._composer_panel.update(self.get_composer_panel())
         self.query_one(Button).loading = True
         self._load_composer()
@@ -58,7 +56,8 @@ class ComposerCard(Container):
         if self._project.composer and self._composer is not None:
             updatable_packages_keys = self._packages_updatable.keys()
             updatable_packages = len(
-                set(self._composer.required_packages.keys()) & set(updatable_packages_keys)
+                set(self._composer.required_packages.keys())
+                & set(updatable_packages_keys)
             )
             if updatable_packages > 0:
                 table.add_row(
@@ -72,7 +71,8 @@ class ComposerCard(Container):
                 )
 
             updatable_packages_dev = len(
-                set(self._composer.required_packages_dev.keys()) & set(updatable_packages_keys)
+                set(self._composer.required_packages_dev.keys())
+                & set(updatable_packages_keys)
             )
             if updatable_packages_dev > 0:
                 table.add_row(
