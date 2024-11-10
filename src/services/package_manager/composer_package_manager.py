@@ -85,8 +85,23 @@ class ComposerPackageManager(AbstractPackageManager):
             self._context.composer_updatable_packages = packages
         return self._context.composer_updatable_packages
 
+    def reset_updatable_packages(self) -> None:
+        self._context.composer_updatable_packages = None
+
     def get_install_command(self) -> CommandType:
         return NonShellCommand(
             path=self._context.current_project.path,
             command=["composer", "install", "--no-ansi", "-n"],
+        )
+
+    def get_update_all_command(self) -> CommandType:
+        return NonShellCommand(
+            path=self._context.current_project.path,
+            command=["composer", "update", "--no-ansi", "-n"],
+        )
+
+    def get_update_package_command(self, package_name: str) -> CommandType:
+        return NonShellCommand(
+            path=self._context.current_project.path,
+            command=["composer", "update", package_name, "--no-ansi", "-n"],
         )

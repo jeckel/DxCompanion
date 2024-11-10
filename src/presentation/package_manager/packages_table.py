@@ -30,7 +30,8 @@ class PackagesTable(DataTable):
         super().__init__(**kwargs)
         self.border_title = title
         self._packages = packages
-        self.add_columns(*("Package", "Required", "Locked", "Upgrade", "Actions"))
+        self.add_columns(*("Package", "Required", "Locked", "Upgrade"))
+        self.add_column(label="Actions ?", key="update")
         self.update_button = Text(" Update", style="bold")
 
     def on_mount(self):
