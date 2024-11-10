@@ -2,7 +2,7 @@ from textual import on
 from textual.app import App
 from textual.css.query import NoMatches
 
-from models import Project
+from models import Project, NonShellCommand
 from service_locator import ServiceLocator
 from .component.message import TerminalCommandRequested
 
@@ -11,7 +11,7 @@ from .composer.composer_screen import ComposerScreen
 from .docker import DockerContainer
 from .package_manager import PackageManagerScreen
 from .summary import ProjectSummaryContainer
-from .component import Sidebar, TerminalModal, NonShellCommand
+from .component import Sidebar, TerminalModal
 from .summary.summary_screen import SummaryScreen
 
 

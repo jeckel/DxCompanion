@@ -7,6 +7,7 @@ from textual.worker import Worker, WorkerState
 from .packages_table import PackagesTable
 from service_locator import ServiceLocator
 from services.package_manager.abstract_package_manager import Package
+from presentation.component import TerminalModal
 
 
 class PackageManagerContainer(Container):
@@ -73,3 +74,11 @@ class PackageManagerContainer(Container):
         table = self.query_one("#packages_dev_table")
         assert isinstance(table, PackagesTable)
         table.refresh_table(event.worker.result["dev"])
+
+    @on(Button.Pressed, "#install_packages")
+    def install_packages(self) -> None:
+        self.app.push_screen(
+            TerminalModal(
+                command=self._package_manager.get_install_command(), allow_rerun=False
+            ),
+        )

@@ -2,9 +2,8 @@ from textual import on
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option
 
-from models import Project
+from models import Project, ShellCommand, NonShellCommand, CommandType
 from models.project import ProjectAction
-from .terminal import ShellCommand, NonShellCommand, CommandType
 from .message import TerminalCommandRequested
 
 

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional
 
+from models import CommandType
 from models.app_context import AppContext
 from services.base_service import BaseService
 
@@ -52,3 +53,7 @@ class AbstractPackageManager(ABC, BaseService):
         :return:
             list of packages with their required, locked and update version
         """
+
+    @abstractmethod
+    def get_install_command(self) -> CommandType:
+        pass

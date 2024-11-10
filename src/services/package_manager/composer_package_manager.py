@@ -1,7 +1,7 @@
 import subprocess
 from typing import Optional
 
-from models import Project
+from models import Project, CommandType, NonShellCommand
 from models.composer import Composer
 from services.package_manager.abstract_package_manager import (
     AbstractPackageManager,
@@ -84,3 +84,9 @@ class ComposerPackageManager(AbstractPackageManager):
                     packages[package_name] = target_version
             self._context.composer_updatable_packages = packages
         return self._context.composer_updatable_packages
+
+    def get_install_command(self) -> CommandType:
+        return NonShellCommand(
+            path=self._context.current_project.path,
+            command=["composer", "install", "--no-ansi", "-n"],
+        )
