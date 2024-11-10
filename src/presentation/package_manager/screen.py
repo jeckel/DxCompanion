@@ -5,6 +5,8 @@ from textual.screen import Screen
 from textual.widgets import Header, Footer
 
 from presentation.component.sidebar import Sidebar
+from .container import PackageManagerContainer
+from service_locator import ServiceLocator
 
 
 class PackageManagerScreen(Screen):
@@ -15,6 +17,12 @@ class PackageManagerScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Sidebar(classes="-hidden")
         yield Header()
+        project = ServiceLocator.context().current_project
+        if len(project.package_managers) > 1:
+            pass
+            # @todo : add tabs per package manager
+        else:
+            yield PackageManagerContainer(project.package_managers[0])
         yield Footer()
 
     def action_return(self):
