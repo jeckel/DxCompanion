@@ -105,3 +105,18 @@ class ComposerPackageManager(AbstractPackageManager):
             path=self._context.current_project.path,
             command=["composer", "update", package_name, "--no-ansi", "-n"],
         )
+
+    def custom_commands(self) -> dict[str, CommandType]:
+        commands: dict[str, CommandType] = {}
+        if self._context.project is None:
+            return commands
+        composer = self.composer_json(self._context.project)
+        if composer is None:
+            return commands
+        for script in composer.manual_scripts:
+            commands[script] = NonShellCommand(
+                path=self._context.current_project.path,
+                label=script.capitalize(),
+                command=["composer", script, "--no-ansi", "-n"],
+            )
+        return commands

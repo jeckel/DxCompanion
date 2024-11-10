@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 from dataclasses import dataclass
 
 from .project import Project
@@ -9,6 +9,7 @@ class ShellCommand:
     path: str
     command: str
     shell: bool = True
+    label: Optional[str] = None
 
     def __str__(self):
         return self.command
@@ -19,6 +20,7 @@ class NonShellCommand:
     path: str
     command: list[str]
     shell: bool = False
+    label: Optional[str] = None
 
     def __str__(self):
         return " ".join(self.command)

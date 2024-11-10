@@ -5,12 +5,10 @@ from textual.widgets.option_list import Option
 from models import Project, ShellCommand, NonShellCommand, CommandType
 from models.project import ProjectAction
 from .message import TerminalCommandRequested
+from .terminal_modal import TerminalModal
 
 
 class ActionOptionList(OptionList):
-    # BORDER_TITLE = "Commands"
-
-    # def __init__(self, project: Project, **kwargs):
     def __init__(
         self,
         project: Project,
@@ -34,3 +32,20 @@ class ActionOptionList(OptionList):
             )
         )
         self.post_message(TerminalCommandRequested(command=command))
+
+
+class ActionList(OptionList):
+    def __init__(self, title: str, actions: list[CommandType], **kwargs):
+        self._actions: list[CommandType] = actions
+        super().__init__(*(Option(action.label) for action in self._actions), **kwargs)
+        self.border_title = title
+
+    @on(OptionList.OptionSelected)
+    def on_script_selected(self, event: OptionList.OptionSelected) -> None:
+        action = self._actions[event.option_index]
+        self.app.push_screen(
+            TerminalModal(
+                command=action,
+                allow_rerun=True,
+            ),
+        )

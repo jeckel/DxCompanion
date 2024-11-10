@@ -71,3 +71,7 @@ class AbstractPackageManager(ABC, BaseService):
     @abstractmethod
     def get_update_package_command(self, package_name: str) -> CommandType:
         pass
+
+    @abstractmethod
+    def custom_commands(self) -> dict[str, CommandType]:
+        pass
