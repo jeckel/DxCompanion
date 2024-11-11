@@ -4,11 +4,12 @@ from textual.events import ScreenResume
 from textual.screen import Screen
 from textual.widgets import Header, Footer
 
-from .composer_container import ComposerContainer
 from presentation.component.sidebar import Sidebar
+from .container import PackageManagerContainer
+from service_locator import ServiceLocator
 
 
-class ComposerScreen(Screen):
+class PackageManagerScreen(Screen):
     BINDINGS = {
         ("escape", "return", "Return to project"),
     }
@@ -16,7 +17,12 @@ class ComposerScreen(Screen):
     def compose(self) -> ComposeResult:
         yield Sidebar(classes="-hidden")
         yield Header()
-        yield ComposerContainer()
+        project = ServiceLocator.context().current_project
+        if len(project.package_managers) > 1:
+            pass
+            # @todo : add tabs per package manager
+        else:
+            yield PackageManagerContainer(project.package_managers[0])
         yield Footer()
 
     def action_return(self):
@@ -24,4 +30,4 @@ class ComposerScreen(Screen):
 
     @on(ScreenResume)
     def screen_resume(self):
-        self.query_one(ComposerContainer).action_refresh()
+        pass

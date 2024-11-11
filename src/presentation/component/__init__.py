@@ -1,3 +1,3 @@
 from .terminal_modal import TerminalModal
-from .terminal import Terminal, ShellCommand, NonShellCommand, CommandType
+from .terminal import Terminal
 from .sidebar import Sidebar

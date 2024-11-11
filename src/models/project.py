@@ -1,7 +1,7 @@
 import json
 import os
 from functools import cached_property
-from typing import Optional
+from typing import Optional, Literal
 from uuid import uuid4, UUID
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -14,6 +14,9 @@ class ProjectAction(BaseModel):
     use_shell: bool = False
 
 
+PackageManager = Literal["composer", "yarn", "npm"]
+
+
 class Project(BaseModel):
     id_: UUID = Field(default_factory=uuid4)
     path: str
@@ -23,6 +26,7 @@ class Project(BaseModel):
     docker_composer_cmd: list[str] = ["docker", "compose"]
     actions: Optional[dict[str, list[ProjectAction]]] = None
     docker_compose_files: list[str] = ["docker-compose.yml"]
+    package_managers: Optional[list[PackageManager]] = []
 
     @classmethod
     def from_json(cls, json_path: str):
@@ -47,3 +51,7 @@ class Project(BaseModel):
         if os.path.exists(composer_file):
             self.composer = True
         return self
+
+    @property
+    def has_package_managers(self) -> bool:
+        return self.package_managers is not None and len(self.package_managers) > 0

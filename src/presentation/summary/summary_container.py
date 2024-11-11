@@ -1,9 +1,10 @@
 from textual.containers import Container
 from textual.widgets import Markdown
+from textual.css.query import NoMatches
 
-from .composer_card import ComposerCard
 from service_locator import ServiceLocator
 from .docker_card import DockerCard
+from .package_card import PackageCard
 from .system_card import SystemCard
 
 
@@ -30,9 +31,13 @@ class ProjectSummaryContainer(Container):
 # Project : {self._project.project_name}
 """
         )
-        yield ComposerCard()
+        if len(ServiceLocator.context().current_project.package_managers) > 0:
+            yield PackageCard()
         yield SystemCard()
         yield DockerCard()
 
-    def refresh_composer(self):
-        self.query_one(ComposerCard).on_mount()
+    def refresh_packages(self):
+        try:
+            self.query_one(PackageCard).refresh_packages()
+        except NoMatches:
+            pass
