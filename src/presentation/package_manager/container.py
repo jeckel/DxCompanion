@@ -5,6 +5,7 @@ from textual.containers import Container, Horizontal
 from textual.app import ComposeResult
 from textual.widgets import Button, DataTable
 from textual.worker import Worker, WorkerState
+from textual.css.query import NoMatches
 
 from .packages_table import PackagesTable
 from service_locator import ServiceLocator
@@ -38,11 +39,13 @@ class PackageManagerContainer(Container):
         self._package_table = PackagesTable(
             title="Packages",
             packages=self._package_manager.project_packages(),
+            allow_update=self._package_manager.has_update_package_command(),
             id="packages_table",
         )
         self._package_dev_table = PackagesTable(
             title="Packages-dev",
             packages=self._package_manager.project_packages("dev"),
+            allow_update=self._package_manager.has_update_package_command(),
             id="packages_dev_table",
         )
 
@@ -54,8 +57,10 @@ class PackageManagerContainer(Container):
             yield self._package_table
             yield self._package_dev_table
         with Horizontal(id="package_manager_actions"):
-            yield Button(label="Install", classes="ml-1", id="install_packages")
-            yield Button(label="Update all", id="update_packages")
+            if self._package_manager.has_install_command():
+                yield Button(label="Install", classes="ml-1", id="install_packages")
+            if self._package_manager.has_update_all_command():
+                yield Button(label="Update all", id="update_packages")
             yield Button.success(label="Refresh", id="refresh_packages", classes="ml-1")
 
     def _disable(self):
@@ -64,8 +69,10 @@ class PackageManagerContainer(Container):
         """
         self._package_table.loading = True
         self._package_dev_table.loading = True
-        self.query_one("#install_packages").disabled = True
-        self.query_one("#update_packages").disabled = True
+        if self._package_manager.has_install_command():
+            self.query_one("#install_packages").disabled = True
+        if self._package_manager.has_update_all_command():
+            self.query_one("#update_packages").disabled = True
         self.query_one("#refresh_packages").disabled = True
 
     def _enable(self):
@@ -74,8 +81,10 @@ class PackageManagerContainer(Container):
         """
         self._package_table.loading = False
         self._package_dev_table.loading = False
-        self.query_one("#install_packages").disabled = False
-        self.query_one("#update_packages").disabled = False
+        if self._package_manager.has_install_command():
+            self.query_one("#install_packages").disabled = False
+        if self._package_manager.has_update_all_command():
+            self.query_one("#update_packages").disabled = False
         self.query_one("#refresh_packages").disabled = False
 
     def on_mount(self) -> None:

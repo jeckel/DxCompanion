@@ -26,12 +26,20 @@ class PackagesTable(DataTable):
 
     _packages: dict[str, Package] = {}
 
-    def __init__(self, title: str, packages: dict[str, Package], **kwargs):
+    def __init__(
+        self,
+        title: str,
+        packages: dict[str, Package],
+        allow_update: bool = True,
+        **kwargs
+    ):
         super().__init__(**kwargs)
         self.border_title = title
         self._packages = packages
+        self._allow_update = allow_update
         self.add_columns(*("Package", "Required", "Locked", "Upgrade"))
-        self.add_column(label="Actions ?", key="update")
+        if self._allow_update:
+            self.add_column(label="Actions", key="update")
         self.update_button = Text(" Update", style="bold")
 
     def on_mount(self):
@@ -55,6 +63,9 @@ class PackagesTable(DataTable):
                     style="italic #00FF00",
                     justify="right",
                 ),
-                self.update_button if package.update is not None else "",
             ]
+            if self._allow_update:
+                styled_row.append(
+                    self.update_button if package.update is not None else ""
+                )
             self.add_row(*styled_row, key=package.name)

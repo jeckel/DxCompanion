@@ -2,7 +2,7 @@ from dependency_injector import containers, providers
 
 from models.app_context import AppContext
 from services import DockerClient, SystemStatus
-from services.package_manager import ComposerPackageManager
+from services.package_manager import ComposerPackageManager, UvPackageManager
 
 
 class ServiceLocator(containers.DeclarativeContainer):
@@ -14,5 +14,6 @@ class ServiceLocator(containers.DeclarativeContainer):
         ComposerPackageManager, context=context
     )
     package_manager = providers.Dict(
-        composer=providers.Singleton(ComposerPackageManager, context=context)
+        composer=providers.Singleton(ComposerPackageManager, context=context),
+        uv=providers.Singleton(UvPackageManager, context=context),
     )

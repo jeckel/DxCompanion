@@ -60,13 +60,25 @@ class AbstractPackageManager(ABC, BaseService):
         Reset updatable pakages list, reload from source the next time
         """
 
+    @staticmethod
+    def has_install_command() -> bool:
+        return True
+
     @abstractmethod
     def get_install_command(self) -> CommandType:
         pass
 
+    @staticmethod
+    def has_update_all_command() -> bool:
+        return True
+
     @abstractmethod
     def get_update_all_command(self) -> CommandType:
         pass
+
+    @staticmethod
+    def has_update_package_command() -> bool:
+        return True
 
     @abstractmethod
     def get_update_package_command(self, package_name: str) -> CommandType:
