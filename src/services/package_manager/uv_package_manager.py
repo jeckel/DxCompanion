@@ -5,7 +5,7 @@ import re
 import json
 from typing import Optional
 
-from models import CommandType
+from models import CommandType, NonShellCommand
 from .abstract_package_manager import AbstractPackageManager, Package
 
 
@@ -30,26 +30,35 @@ class UvPackageManager(AbstractPackageManager):
     def reset_updatable_packages(self) -> None:
         pass
 
-    @staticmethod
-    def has_install_command() -> bool:
-        return False
+    # @staticmethod
+    # def has_install_command() -> bool:
+    #     return False
 
     def get_install_command(self) -> CommandType:
-        raise NotImplementedError
+        return NonShellCommand(
+            path=self._context.current_project.path,
+            command=["uv", "sync"],
+        )
 
-    @staticmethod
-    def has_update_all_command() -> bool:
-        return False
+    # @staticmethod
+    # def has_update_all_command() -> bool:
+    #     return False
 
     def get_update_all_command(self) -> CommandType:
-        raise NotImplementedError
+        return NonShellCommand(
+            path=self._context.current_project.path,
+            command=["uv", "sync", "--upgrade"],
+        )
 
-    @staticmethod
-    def has_update_package_command() -> bool:
-        return False
+    # @staticmethod
+    # def has_update_package_command() -> bool:
+    #     return False
 
     def get_update_package_command(self, package_name: str) -> CommandType:
-        raise NotImplementedError
+        return NonShellCommand(
+            path=self._context.current_project.path,
+            command=["uv", "add", "--upgrade-package", package_name, package_name],
+        )
 
     def custom_commands(self) -> dict[str, CommandType]:
         return {}
