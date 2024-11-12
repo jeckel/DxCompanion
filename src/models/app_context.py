@@ -10,6 +10,7 @@ class AppContext(BaseModel):
 
     # Composer related context
     composer_updatable_packages: Optional[dict[str, str]] = None
+    uv_updatable_packages: Optional[dict[str, str]] = None
 
     @property
     def current_project(self) -> Project:
