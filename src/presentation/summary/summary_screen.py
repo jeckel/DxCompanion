@@ -24,8 +24,11 @@ class SummaryScreen(Screen):
         with TabbedContent(initial="summary-pan"):
             with TabPane(title="Summary", id="summary-pan"):
                 yield ProjectSummaryContainer()
-            with TabPane(title="Docker", id="docker-pan"):
-                yield DockerContainer(project=ServiceLocator.context().current_project)
+            if ServiceLocator.docker_client().has_containers():
+                with TabPane(title="Docker", id="docker-pan"):
+                    yield DockerContainer(
+                        project=ServiceLocator.context().current_project
+                    )
         yield Footer()
 
     @on(ScreenResume)

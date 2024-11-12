@@ -34,7 +34,8 @@ class ProjectSummaryContainer(Container):
         if len(ServiceLocator.context().current_project.package_managers) > 0:
             yield PackageCard()
         yield SystemCard()
-        yield DockerCard()
+        if ServiceLocator.docker_client().has_containers():
+            yield DockerCard()
 
     def refresh_packages(self):
         try:

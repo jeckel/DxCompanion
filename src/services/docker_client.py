@@ -31,6 +31,15 @@ class DockerClient(BaseService):
         container = self._client.containers.get(container_id)
         return container.logs(stream=True, follow=True)
 
+    def has_containers(self) -> bool:
+        project = self._context.current_project
+        for compose_file in project.docker_compose_files:
+            file_path = os.path.join(project.path, compose_file)
+            if not os.path.exists(file_path):
+                continue
+            return True
+        return False
+
     def list_container_names(self) -> dict[str, str]:
         """
         List docker containers names and their statuses.
@@ -41,6 +50,9 @@ class DockerClient(BaseService):
         running_containers = self.get_running_containers()
         for compose_file in project.docker_compose_files:
             file_path = os.path.join(project.path, compose_file)
+            if not os.path.exists(file_path):
+                continue
+
             with open(file_path, "r") as file:
                 docker_compose = yaml.safe_load(file)
 

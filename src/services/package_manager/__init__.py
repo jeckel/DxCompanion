@@ -1,1 +1,2 @@
 from .composer_package_manager import ComposerPackageManager
+from .uv_package_manager import UvPackageManager

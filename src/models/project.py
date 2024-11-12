@@ -14,7 +14,7 @@ class ProjectAction(BaseModel):
     use_shell: bool = False
 
 
-PackageManager = Literal["composer", "yarn", "npm"]
+PackageManager = Literal["composer", "uv"]
 
 
 class Project(BaseModel):
